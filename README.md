@@ -12,7 +12,7 @@
     <img alt="AppVeyor badge" src="https://img.shields.io/badge/build-passing-brightgreen">
   </a>
   <a href = "https://github.com/nakashimas/ggpython/releases">
-    <img src="https://img.shields.io/badge/releace-v1.0.0%20-58839b.svg?style=flat">
+    <img src="https://img.shields.io/badge/releace-v0.0.0%20-58839b.svg?style=flat">
   </a>
   <a href="./LICENSE">
     <img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat">
