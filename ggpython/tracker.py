@@ -311,6 +311,4 @@ class ValorantTrackerWebsiteAPI(WebsiteAPI):
         return _output
     
 if __name__ == "__main__":
-    valo = ValorantTrackerWebsiteAPI()
-    match_list = valo.get_match_result_list("Shift壊れた", "#4970", n_match = 3, mode = "unrated")
-    print(match_list)
+    pass

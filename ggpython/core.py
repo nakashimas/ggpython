@@ -9,8 +9,10 @@
 # imports
 try:
     from .tracker import *
+    from .utils import *
 except Exception as _:
     from tracker import *
+    from utils import *
 
 if __name__ == "__main__":
     pass
