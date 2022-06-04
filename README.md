@@ -57,9 +57,10 @@ Discord Bot用に出力結果を整形できる。(調整中)
 ```py
 import ggpython
 valorant = ggpython.ValorantTrackerWebsiteAPI()
-valorant.get_match_result_list("Username", "#tag", mode = "unrated")
+result_list = valorant.get_match_result_list("Username", "#tag", mode = "unrated")
 
-print(ggpython.convert_valorant_match_to_discord())
+print(ggpython.convert_valorant_match_to_discord(result_list))
+# -> to paste discord plane text
 ```
 
 結果: 
