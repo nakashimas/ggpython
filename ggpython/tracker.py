@@ -72,7 +72,10 @@ class WebsiteAPI(webdriver.Chrome):
     
     def __del__(self):
         """ __del__ """
-        self.close()
+        try:
+            self.close()
+        except Exception as e:
+            print("_____", "close error")
     
     def __enter__(self):
         """ __enter__ """
@@ -80,7 +83,10 @@ class WebsiteAPI(webdriver.Chrome):
 
     def __exit__(self, exc_type, exc_value, traceback):
         """ __exit__ """
-        self.close()
+        try:
+            self.close()
+        except Exception as e:
+            print("_____", "close error")
     
     def __str__(self):
         """ __str__ """

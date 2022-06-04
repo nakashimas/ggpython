@@ -73,16 +73,17 @@ def convert_valorant_match_to_discord(result_list, min_out = False):
     return _output_all
 
 def convert_valorant_match_to_ascii(result_list):
-    row_format = "| {} | PT{} | {:<10} | {:<11} | {:<16} | {:>3} | {:>2}/{:>2}/{:<2} {:>3} | {:^3} | {:>5} | {:>2} | {:>2}/{:<2} | {:>2} | {:>4} |"
+    row_format = "| {} | PT{} | {:<10} | {:<11} | {:　<15}{:>6} | {:>3} | {:>2}/{:>2}/{:<2} {:>3} | {:^3} | {:>5} | {:>2} | {:>2}/{:<2} | {:>2} | {:>4} |"
     _output_all = []
 
     for match_result in result_list:
         _output = []
         _current_team = 1
         _header = row_format.format(
-            "#", " ", "Agents", "Rank", "Username", "ACS", "K", "D", "A","KD", "+/-", "ADR", "HS", "FK", "FD", "MK", "Econ"
+            "#", " ", "Agents", "Rank", to_two_byte("Username"), "#Tag", "ACS", "K", "D", "A","KD", "+/-", "ADR", "HS", "FK", "FD", "MK", "Econ"
         )
-        _hr = "+" + "-" * (len(_header) - 2) + "+"
+        _hr = "+" + "-" * (3) + "+" + "-" * (5) + "+" + "-" * (12) + "+"  + "-" * (13) + "+" + "-" + "－" * (15) + "-" * (7) + "+"
+        _hr += "-" * (5) + "+" + "-" * (14) + "+" + "-" * (5) + "+" + "-" * (7) + "+" + "-" * (4) + "+" + "-" * (7) + "+" + "-" * (4) + "+" + "-" * (6) + "+"
         _output.append(_hr)
         _output.append(_header)
         _output.append(_hr)
@@ -92,7 +93,7 @@ def convert_valorant_match_to_ascii(result_list):
                 user_data["PartyNumber"], 
                 user_data["Agents"], 
                 user_data["CurrentRank"][0] + str(user_data["CurrentRank"][1]),
-                user_data["Name"] + user_data["NameTag"],
+                to_two_byte(user_data["Name"]), user_data["NameTag"],
                 user_data["ACS"],
                 user_data["K"], user_data["D"], user_data["A"],
                 user_data["KD"],

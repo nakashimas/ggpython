@@ -33,15 +33,42 @@
 
 ## Description
 
-編集中
+TrackerNetwork 非公式API。  
+Discord bot 用に作成しているものをPythonライブラリとして管理している。
+
+サポートしているゲーム
+
+- Valorant
 
 ## Usage
+
+Valorantのマッチリザルトを取得できる。(最大20件)
 
 ```py
 import ggpython
 valorant = ggpython.ValorantTrackerWebsiteAPI()
 valorant.get_match_result_list("Username", "#tag", mode = "unrated")
 ```
+
+Discord Bot用に出力結果を整形できる。(調整中)
+
+サンプル: 
+
+```py
+import ggpython
+valorant = ggpython.ValorantTrackerWebsiteAPI()
+valorant.get_match_result_list("Username", "#tag", mode = "unrated")
+
+print(ggpython.convert_valorant_match_to_discord())
+```
+
+結果: 
+
+<p style="text-align:center;">
+  <img src="./img/discord_1.png" style="width:60%"/>
+</p>
+
+Discordサーバに絵文字を登録しておく必要がある
 
 ## Installation
 
