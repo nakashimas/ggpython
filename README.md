@@ -66,7 +66,7 @@ print(ggpython.convert_valorant_match_to_discord(result_list))
 結果: 
 
 <p style="text-align:center;">
-  <img src="./img/discord_1.png" style="width:60%"/>
+  <img src="https://github.com/nakashimas/ggpython/blob/master/img/discord_1.png?raw=true" style="width:60%"/>
 </p>
 
 Discordサーバに絵文字を登録しておく必要がある
