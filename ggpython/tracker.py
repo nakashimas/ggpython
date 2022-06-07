@@ -6,22 +6,7 @@
 # ## 
 # ##############################################################################
 # =============================================================================>
-# imports
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.common.by import By
-import chromedriver_binary
-import chromedriver_autoinstaller as chromedriver
-chromedriver.install()
-
-from xml.etree import ElementTree
-import urllib.parse
-import re
-import time
-import functools
+# Definition
 
 VALORANT_TRACKER_WEBSITE = "https://tracker.gg/valorant/"
 VALORANT_AGENT_ICONS = {
@@ -46,6 +31,32 @@ VALORANT_AGENT_ICONS = {
     "neon"      : "https://titles.trackercdn.com/valorant-api/agents/bb2a4828-46eb-8cd1-e765-15848195d751/displayicon.png"
 }
 
+CHROME_UPDATE = True
+
+# =============================================================================>
+# imports
+# =============================================================================>
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.common.by import By
+import chromedriver_binary
+import chromedriver_autoinstaller as chromedriver
+
+try:
+    if CHROME_UPDATE:
+        chromedriver.install()
+except Exception as e:
+    print("ERRR:", e)
+
+from xml.etree import ElementTree
+import urllib.parse
+import re
+import time
+import functools
+
 def dict_find_key(_dict, _value):
     key_list = list(_dict.keys())
     value_list = list(_dict.values())
@@ -57,6 +68,9 @@ class WebsiteAPI(webdriver.Chrome):
 
     Args:
         webdriver.Chrome (_type_): _description_
+    References:
+        - to solve `--headless timeout`
+            https://stackoverflow.com/questions/67744514/timeout-exception-error-on-using-headless-chrome-webdriver
     """
     # =========================================================================>
     # Default
@@ -66,9 +80,12 @@ class WebsiteAPI(webdriver.Chrome):
         self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.options.add_argument('--ignore-certificate-errors')
         self.options.add_argument('--ignore-ssl-errors')
+        self.options.add_argument('--headless')
+        self.options.add_argument('--start-maximized')
+        self.options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36')
         webdriver.Chrome.__init__(self, *args, options = self.options, **kwargs)
 
-        self.set_window_size("1200", "1100")
+        self.set_window_size("12000", "11000")
     
     def __del__(self):
         """ __del__ """
@@ -108,7 +125,7 @@ class WebsiteAPI(webdriver.Chrome):
 
     # =========================================================================>
     # Utils
-    def wait_element(self, seconds, element_by = By.CLASS_NAME, target_string = "", timeout = 20):
+    def wait_element(self, seconds, element_by = By.CLASS_NAME, target_string = "", timeout = 30):
         wait = WebDriverWait(self, timeout)
         element = wait.until(
             expected_conditions.presence_of_element_located(
@@ -118,7 +135,7 @@ class WebsiteAPI(webdriver.Chrome):
         time.sleep(seconds)
         return element
     
-    def wait_element_clickable(self, seconds, element_by = By.CLASS_NAME, target_string = "", timeout = 20):
+    def wait_element_clickable(self, seconds, element_by = By.CLASS_NAME, target_string = "", timeout = 30):
         wait = WebDriverWait(self, timeout)
         element = wait.until(
             expected_conditions.element_to_be_clickable(
