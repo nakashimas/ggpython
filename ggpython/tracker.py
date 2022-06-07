@@ -7,7 +7,6 @@
 # ##############################################################################
 # =============================================================================>
 # Definition
-
 VALORANT_TRACKER_WEBSITE = "https://tracker.gg/valorant/"
 VALORANT_AGENT_ICONS = {
     "jett"      : "https://titles.trackercdn.com/valorant-api/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/displayicon.png",
@@ -33,9 +32,16 @@ VALORANT_AGENT_ICONS = {
 
 CHROME_UPDATE = True
 
-# =============================================================================>
-# imports
-# =============================================================================>
+# =============================================================================> 
+# imports default
+from xml.etree import ElementTree
+import urllib.parse
+import re
+import time
+import functools
+
+# =============================================================================> 
+# imports third party
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -51,17 +57,20 @@ try:
 except Exception as e:
     print("ERRR:", e)
 
-from xml.etree import ElementTree
-import urllib.parse
-import re
-import time
-import functools
+# =============================================================================> 
+# imports local
+
+# =============================================================================> 
+# define local metod
 
 def dict_find_key(_dict, _value):
     key_list = list(_dict.keys())
     value_list = list(_dict.values())
     _pos = value_list.index(_value)
     return key_list[_pos]
+
+# =============================================================================> 
+# define class
 
 class WebsiteAPI(webdriver.Chrome):
     """WebsiteAPI
@@ -144,6 +153,7 @@ class WebsiteAPI(webdriver.Chrome):
         )
         time.sleep(seconds)
         return element
+
 
 class ValorantTrackerWebsiteAPI(WebsiteAPI):
     def __init__(self):
@@ -332,6 +342,8 @@ class ValorantTrackerWebsiteAPI(WebsiteAPI):
             _output.append(self.get_match_result(i))
 
         return _output
-    
+
+# =============================================================================> 
+
 if __name__ == "__main__":
     pass

@@ -1,8 +1,21 @@
 # -*- coding: utf-8 -*-
-
-from setuptools import setup, find_packages
+# =============================================================================>
+# ##############################################################################
+# ## 
+# ## setup.py
+# ## 
+# ##############################################################################
+# =============================================================================>
+# imports default
 import os
 from importlib import resources
+
+# =============================================================================>
+# imports third party
+from setuptools import setup, find_packages
+
+# =============================================================================>
+# imports local
 
 # =============================================================================> 
 # readme
@@ -44,16 +57,23 @@ DESCRIPTION = "Tracker Network Wrapper In Python."
 VERSION = "0.0.0"
 
 CLASSIFIERS = [
+    'Development Status :: 1 - Planning',
     'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10'
+    'Programming Language :: Python :: 3.10',
+    'Operating System :: POSIX',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: MacOS :: MacOS X',
+    'Topic :: Software Development :: Libraries',
+    'Topic :: Utilities'
 ]
 
 # =============================================================================> 
 setup(
     name = 'ggpython',
-    keywords = '',
+    keywords = 'game tracker valorant',
     version = VERSION,
     description = DESCRIPTION,
     long_description = README,

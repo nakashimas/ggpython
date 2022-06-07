@@ -6,17 +6,30 @@
 # ## 
 # ##############################################################################
 # =============================================================================>
-# imports
+# imports default
+
+# =============================================================================>
+# imports third party
+
+# =============================================================================>
+# imports local
+
+# =============================================================================>
+# local method
 
 def to_two_byte(s):
     return s.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　")
 
+# =============================================================================>
+# valorant
 
 def valorant_agent_to_discord(s):
     return (":" + s.lower() + ":")
 
+
 def valorant_rank_to_discord(t):
     return (":" + t[0].lower() + ":") + to_two_byte(str(t[1])) + " "
+
 
 def convert_valorant_match_to_discord(result_list, min_out = False):
     # 全角文字にする
@@ -72,6 +85,7 @@ def convert_valorant_match_to_discord(result_list, min_out = False):
     
     return _output_all
 
+
 def convert_valorant_match_to_ascii(result_list):
     row_format = "| {} | PT{} | {:<10} | {:<11} | {:　<15}{:>6} | {:>3} | {:>2}/{:>2}/{:<2} {:>3} | {:^3} | {:>5} | {:>2} | {:>2}/{:<2} | {:>2} | {:>4} |"
     _output_all = []
@@ -114,12 +128,17 @@ def convert_valorant_match_to_ascii(result_list):
     
     return _output_all
 
+# =============================================================================>
+# main
 
 def convert_to_ascii(result_list):
     return result_list
 
+
 def convert_to_discord(result_list):
     return "```sh\n{}\n```".format(convert_to_ascii(result_list))
-    
+
+# =============================================================================>
+  
 if __name__ == "__main__":
     pass
