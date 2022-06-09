@@ -5,7 +5,7 @@
     </div>
 </p>
 
-<h4 align="center">Tracker with Python</h4>
+<h4 align="center">Tracker Network Wrapper In Python.</h4>
 
 <p align="center">
   <a>
