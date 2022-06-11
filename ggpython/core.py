@@ -8,7 +8,7 @@
 # =============================================================================>
 # Definition
 
-SILENCE_MODE = True
+SILENCE_MODE = False
 
 # =============================================================================>
 # imports default
@@ -76,6 +76,7 @@ class GGTrackerAPI:
     # Default
     def __init__(self, game = GAME.NOGAME):
         """ __init__ """
+        self._print_info("Initialize " + str(self), mode = "i")
         self.game = game
         self.tracker = None
         self._init_tracker()
@@ -86,6 +87,7 @@ class GGTrackerAPI:
 
     def __exit__(self, exc_type, exc_value, traceback):
         """ __exit__ """
+        self._print_info("Quit GGTrackerAPI", mode = "i")
         try:
             self.tracker.quit()
         except Exception as e:
@@ -93,7 +95,10 @@ class GGTrackerAPI:
     
     def __str__(self):
         """ __str__ """
-        return "GGTrackerAPI with " + str(self.tracker)
+        if self.tracker is None:
+            return "GGTrackerAPI"
+        else:
+            return "GGTrackerAPI with " + str(self.tracker)
     
     def __getattr__(self, name):
         """__getattr__
@@ -110,8 +115,8 @@ class GGTrackerAPI:
         if (not name.startswith("_")) and (not name.startswith("game")) and (not name.startswith("tracker")):
             attr_value = getattr(self.tracker, name)
             if callable(attr_value):
+                self._print_info("Touch " + str(self.tracker) + " info", mode = "i")
                 return attr_value
-        return super().__getattr__(self, name)
     
     # =========================================================================>
     # Class Method
@@ -126,17 +131,18 @@ class GGTrackerAPI:
         Raises:
             GGTrackerError: some of error
         """
-        if mode == "i":
-            message = "INFO: " + message
-            print(message)
-        elif mode == "w":
-            message = "WARN: " + message
-            print(message)
-            warnings.warn("", FutureWarning, stacklevel=4)
-        elif mode == "e":
-            message = "ERRR: " + message
-            print(message)
-            raise GGTrackerError()
+        if not SILENCE_MODE:
+            if mode == "i":
+                message = "INFO: " + message
+                print(message)
+            elif mode == "w":
+                message = "WARN: " + message
+                print(message)
+                warnings.warn("", FutureWarning, stacklevel=4)
+            elif mode == "e":
+                message = "ERRR: " + message
+                print(message)
+                raise GGTrackerError()
 
     # =========================================================================>
     # SetGet

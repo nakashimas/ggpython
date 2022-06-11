@@ -9,12 +9,14 @@
 # Definition
 
 CHROME_UPDATE = True
+SILENCE_MODE = False
 
 # =============================================================================> 
 # imports default
 from xml.etree import ElementTree
 import time
 from abc import ABCMeta, abstractmethod
+import warnings
 
 # =============================================================================> 
 # imports third party
@@ -87,6 +89,35 @@ class WebsiteAPI(webdriver.Chrome):
     def __str__(self):
         """ __str__ """
         return "WebsiteAPI"
+    
+    # =========================================================================>
+    # Class Method
+    @classmethod
+    def _print_info(cls, message, mode = "i"):
+        """_print_info
+
+        Args:
+            message (str): printing message
+            mode (str, optional): 'i' or 'w' or 'e' or 'p'. Defaults to 'i'.
+
+        Raises:
+            Exception: some of error
+        """
+        if not SILENCE_MODE:
+            if mode == "i":
+                message = "INFO: " + message
+                print(message)
+            elif mode == "w":
+                message = "WARN: " + message
+                print(message)
+                warnings.warn("", FutureWarning, stacklevel=4)
+            elif mode == "e":
+                message = "ERRR: " + message
+                print(message)
+                raise Exception()
+            elif mode == "p":
+                message = "_____ " + message
+                print(message)
     
     # =========================================================================>
     # SetGet

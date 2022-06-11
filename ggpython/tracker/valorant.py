@@ -59,16 +59,22 @@ def dict_find_key(_dict, _value):
 
 class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
     def __init__(self):
+        """ __init__ """
+        self._print_info("Initialize ValorantTrackerWebsiteAPI", mode = "p")
         super().__init__()
+    
+    def __str__(self):
+        """ __str__ """
+        return "Valorant"
     
     # =========================================================================>
     # Class Method
     @classmethod
-    def _get_match_result(cls, match_url):
-        """_summary_
+    def _get_match_result(cls, match_url) -> dict:
+        """_get_match_result
 
         Args:
-            match_url (_type_): _description_
+            match_url (str): match url
         Returns:
             {
                 Agents, PartyNumber,
@@ -76,6 +82,8 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
                 ACS, K, D, A, PM, KD, 
                 ADR, HS, FK, FD, MK, Econ
             }
+        ToDo:
+            - get duels
         """
         _output = {}
 
@@ -187,9 +195,9 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         return _output
     
     # =========================================================================>
-    # Utils
+    # Utils override
     def get(self, user_name, user_tag, tracker = "matches", tracker_query = {}):
-        """_summary_
+        """get
 
         Args:
             user_name (str) : valorant user name
@@ -204,33 +212,42 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         target_url = VALORANT_TRACKER_WEBSITE + "profile/riot/" + target_url # アップデートで使用不可になったら変更する
         super().get(target_url)
     
-    def get_match_summary(self, *args, **kwargs):
+    def get_match_summary(self, user_name, user_tag, mode = "unrated"):
         """get_match_summary
-        Discription:
-            get a list of game match summary
-        Return:
-            dict : game match summary
-        """
-        return {}
-    
-    def get_pc_summary(self, *args, **kwargs):
-        """get_pc_summary
-        Discription:
-            get a list of game playable character summary
-        Return:
-            dict : game playable character summary
-        """
-        return {}
-
-    def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated"):
-        """_summary_
-
         Args:
-            user_name (str): _description_
-            user_tag (str): _description_
-            mode (str, optional): match playlist . Defaults to "unrated".
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            mode (str, optional): match playlist. Defaults to "unrated".
                 "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
+        self._print_info("get match summary", mode = "p")
+        self._print_info("This is `coming soon` method", mode = "w")
+        return {}
+    
+    def get_pc_summary(self, user_name, user_tag, mode = "unrated"): # same as get_pc_result
+        """get_pc_summary
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            mode (str, optional): match playlist. Defaults to "unrated".
+                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+        """
+        self._print_info("get pc summary", mode = "p")
+        return self.get_pc_result(user_name, user_tag, mode = mode)
+
+    def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated"):
+        """get_match_url_list
+
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            n_match (int)   : number of match count. Defaults to None.
+            mode (str, optional): match playlist. Defaults to "unrated".
+                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+        Returns:
+            list : url
+        """
+        self._print_info("get match url list", mode = "p")
         # アクセス
         self.get(user_name, user_tag, tracker_query = {"playlist" : mode})
         
@@ -253,6 +270,18 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         return match_url_list
     
     def get_match_result(self, user_name, user_tag, n_match = None, mode = "unrated"):
+        """get_match_result
+
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            n_match (int)   : number of match count. Defaults to None.
+            mode (str, optional): match playlist. Defaults to "unrated".
+                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+        Returns:
+            dict: result
+        """
+        self._print_info("get match result", mode = "p")
         match_url_list = self.get_match_url_list(user_name, user_tag, n_match = n_match, mode = mode)
 
         _output = []
@@ -261,24 +290,74 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
 
         return _output
 
-    def get_pc_url_list(self, *args, **kwargs):
-        """get_pc_url_list
-        Discription:
-            get a list of game pc result url
-        Return:
-            list : game pc result url
-        """
+    def get_pc_url_list(self, user_name, user_tag, mode = "unrated"): # unnecessary method !!!
+        """ get_pc_url_list """
+        self._print_info("This is not working in valorant", mode = "e")
         return []
     
-    def get_pc_result(self, *args, **kwargs):
+    def get_pc_result(self, user_name, user_tag, mode = "unrated"):
         """get_pc_result
-        Discription:
-            get a list of game pc result
-            1. call get_pc_url_list
-            2. get a results from url list
-        Return:
-            dict : game pc result
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            mode (str, optional): match playlist. Defaults to "unrated".
+                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
+        self._print_info("get pc result", mode = "p")
+        self._print_info("This is `coming soon` method", mode = "w")
+        return {}
+
+    # =========================================================================>
+    # Utils valorant original
+    def get_map_result(self, user_name, user_tag, mode = "unrated") -> dict:
+        """get_map_result
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            mode (str, optional): match playlist. Defaults to "unrated".
+                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+        """
+        self._print_info("This is `coming soon` method", mode = "w")
+        return {}
+    
+    def get_weapon_result(self, user_name, user_tag, mode = "unrated") -> dict:
+        """get_weapon_result
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            mode (str, optional): match playlist. Defaults to "unrated".
+                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+        """
+        self._print_info("This is `coming soon` method", mode = "w")
+        return {}
+    
+    def get_award_result(self, user_name, user_tag) -> dict:
+        """get_award_result
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+        """
+        self._print_info("This is `coming soon` method", mode = "w")
+        return {}
+    
+    def get_custom_url_list(self, user_name, user_tag, n_match = None) -> list:
+        """get_custom_url_list
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            n_match (int)   : number of match count. Defaults to None.
+        """
+        self._print_info("This is `coming soon` method", mode = "w")
+        return []
+    
+    def get_custom_result(self, user_name, user_tag, n_match = None) -> dict:
+        """get_custom_result
+        Args:
+            user_name (str) : valorant user name
+            user_tag (str)  : valorant user name such as #(.*?)
+            n_match (int)   : number of match count. Defaults to None.
+        """
+        self._print_info("This is `coming soon` method", mode = "w")
         return {}
 
 # =============================================================================> 
