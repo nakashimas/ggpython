@@ -107,7 +107,7 @@ class GGTrackerAPI:
         Returns:
             obj: attribute
         """
-        if name.startswith("get") or name.startswith("set") or name.startswith("find"):
+        if (not name.startswith("_")) and (not name.startswith("game")) and (not name.startswith("tracker")):
             attr_value = getattr(self.tracker, name)
             if callable(attr_value):
                 return attr_value
@@ -116,7 +116,16 @@ class GGTrackerAPI:
     # =========================================================================>
     # Class Method
     @classmethod
-    def print_info(cls, message, mode = "i"):
+    def _print_info(cls, message, mode = "i"):
+        """_print_info
+
+        Args:
+            message (str): printing message
+            mode (str, optional): 'i' or 'w' or 'e'. Defaults to "i".
+
+        Raises:
+            GGTrackerError: some of error
+        """
         if mode == "i":
             message = "INFO: " + message
             print(message)
@@ -154,12 +163,13 @@ class GGTrackerAPI:
     # =========================================================================>
     # Utils
     def _init_tracker(self):
+        """ _init_tracker """
         if self.game == GAME.NOGAME:
             self.tracker = WebsiteAPI()
         elif self.game == GAME.VALORANT:
             self.tracker = ValorantTrackerWebsiteAPI()
         else:
-            self.print_info("this game tracker is not working in now version", mode = "w")
+            self._print_info("this game tracker is not working in now version", mode = "w")
             self.tracker = WebsiteAPI() # not yet
 
 
