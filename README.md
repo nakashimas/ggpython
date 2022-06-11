@@ -45,9 +45,11 @@ Discord bot 用に作成しているものをPythonライブラリとして管�
 Valorantのマッチリザルトを取得できる。(最大20件)
 
 ```py
-import ggpython
-valorant = ggpython.ValorantTrackerWebsiteAPI()
-valorant.get_match_result_list("Username", "#tag", mode = "unrated")
+from ggpython import GGTrackerAPI, GAME
+
+with GGTrackerAPI(GAME.VALORANT) as gg:
+    gg.get_match_result_list("Username", "#tag", mode = "unrated")
+
 ```
 
 Discord Bot用に出力結果を整形できる。(調整中)
@@ -55,11 +57,12 @@ Discord Bot用に出力結果を整形できる。(調整中)
 サンプル: 
 
 ```py
-import ggpython
-valorant = ggpython.ValorantTrackerWebsiteAPI()
-result_list = valorant.get_match_result_list("Username", "#tag", mode = "unrated")
+from ggpython import GGTrackerAPI, GAME, convert_valorant_match_to_discord
 
-print(ggpython.convert_valorant_match_to_discord(result_list))
+with GGTrackerAPI(GAME.VALORANT) as gg:
+    result_list = gg.get_match_result_list("Username", "#tag", mode = "unrated")
+    print(convert_valorant_match_to_discord(result_list))
+
 # -> to paste discord plane text
 ```
 
