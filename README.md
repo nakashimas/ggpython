@@ -48,8 +48,7 @@ Valorantのマッチリザルトを取得できる。(最大20件)
 from ggpython import GGTrackerAPI, GAME
 
 with GGTrackerAPI(GAME.VALORANT) as gg:
-    gg.get_match_result_list("Username", "#tag", mode = "unrated")
-
+    res = gg.get_match_result("Username", "#tag", mode = "unrated")
 ```
 
 Discord Bot用に出力結果を整形できる。(調整中)
@@ -57,12 +56,7 @@ Discord Bot用に出力結果を整形できる。(調整中)
 サンプル: 
 
 ```py
-from ggpython import GGTrackerAPI, GAME, convert_valorant_match_to_discord
-
-with GGTrackerAPI(GAME.VALORANT) as gg:
-    result_list = gg.get_match_result_list("Username", "#tag", mode = "unrated")
-    print(convert_valorant_match_to_discord(result_list))
-
+print(convert_valorant_match_to_discord(res))
 # -> to paste discord plane text
 ```
 

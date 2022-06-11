@@ -64,7 +64,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
     # =========================================================================>
     # Class Method
     @classmethod
-    def get_match_result(cls, match_url):
+    def _get_match_result(cls, match_url):
         """_summary_
 
         Args:
@@ -204,6 +204,24 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         target_url = VALORANT_TRACKER_WEBSITE + "profile/riot/" + target_url # アップデートで使用不可になったら変更する
         super().get(target_url)
     
+    def get_match_summary(self, *args, **kwargs):
+        """get_match_summary
+        Discription:
+            get a list of game match summary
+        Return:
+            dict : game match summary
+        """
+        return {}
+    
+    def get_pc_summary(self, *args, **kwargs):
+        """get_pc_summary
+        Discription:
+            get a list of game playable character summary
+        Return:
+            dict : game playable character summary
+        """
+        return {}
+
     def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated"):
         """_summary_
 
@@ -234,14 +252,34 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
 
         return match_url_list
     
-    def get_match_result_list(self, user_name, user_tag, n_match = None, mode = "unrated"):
+    def get_match_result(self, user_name, user_tag, n_match = None, mode = "unrated"):
         match_url_list = self.get_match_url_list(user_name, user_tag, n_match = n_match, mode = mode)
 
         _output = []
         for i in match_url_list:
-            _output.append(self.get_match_result(i))
+            _output.append(self._get_match_result(i))
 
         return _output
+
+    def get_pc_url_list(self, *args, **kwargs):
+        """get_pc_url_list
+        Discription:
+            get a list of game pc result url
+        Return:
+            list : game pc result url
+        """
+        return []
+    
+    def get_pc_result(self, *args, **kwargs):
+        """get_pc_result
+        Discription:
+            get a list of game pc result
+            1. call get_pc_url_list
+            2. get a results from url list
+        Return:
+            dict : game pc result
+        """
+        return {}
 
 # =============================================================================> 
 

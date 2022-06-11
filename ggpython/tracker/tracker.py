@@ -126,8 +126,31 @@ class WebsiteAPI(webdriver.Chrome):
 
 
 class TrackerWebsiteAPI(WebsiteAPI, Singleton, metaclass = ABCMeta):
+    """TrackerWebsiteAPI
+    abstract class
+    """
     @abstractmethod
-    def get_match_url_list(self):
+    def get_match_summary(self, *args, **kwargs) -> dict:
+        """get_match_summary
+        Discription:
+            get a list of game match summary
+        Return:
+            dict : game match summary
+        """
+        return {}
+
+    @abstractmethod
+    def get_pc_summary(self, *args, **kwargs) -> dict:
+        """get_pc_summary
+        Discription:
+            get a list of game playable character summary
+        Return:
+            dict : game playable character summary
+        """
+        return {}
+
+    @abstractmethod
+    def get_match_url_list(self, *args, **kwargs) -> list:
         """get_match_url_list
         Discription:
             get a list of game match result url
@@ -137,14 +160,36 @@ class TrackerWebsiteAPI(WebsiteAPI, Singleton, metaclass = ABCMeta):
         return []
     
     @abstractmethod
-    def get_match_result_list(self):
-        """get_match_result_list
+    def get_match_result(self, *args, **kwargs) -> dict:
+        """get_match_result
         Discription:
             get a list of game match result
             1. call get_match_url_list
             2. get a results from url list
         Return:
             dict : game match result
+        """
+        return {}
+
+    @abstractmethod
+    def get_pc_url_list(self, *args, **kwargs) -> list:
+        """get_pc_url_list
+        Discription:
+            get a list of game pc result url
+        Return:
+            list : game pc result url
+        """
+        return []
+    
+    @abstractmethod
+    def get_pc_result(self, *args, **kwargs) -> dict:
+        """get_pc_result
+        Discription:
+            get a list of game pc result
+            1. call get_pc_url_list
+            2. get a results from url list
+        Return:
+            dict : game pc result
         """
         return {}
 
