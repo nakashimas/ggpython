@@ -6,7 +6,14 @@
 # ## 
 # ##############################################################################
 # =============================================================================>
+# Definition
+
+SILENCE_MODE = True
+
+# =============================================================================>
 # imports default
+import warnings
+import inspect
 
 # =============================================================================>
 # imports third party
@@ -47,27 +54,113 @@ class GAME(_const):
     Args:
         _const (_type_): _description_
     """
-    FORTNITE = None
-    VALORANT = ValorantTrackerWebsiteAPI
-    APEX_LEGENDS = None
-    DESTINY_TWO = None
-    CALL_OF_DUTY = None
-    RAINBOW_SIX = None
-    LEAGUE_OF_LEGENDS = None
-    HALO_INFINITE = None
+    NOGAME = "no_game"
+    FORTNITE = "fortnite"
+    VALORANT = "valorant"
+    APEX_LEGENDS = "apex_legends"
+    DESTINY_TWO = "distiny_2"
+    CALL_OF_DUTY = "call_of_duty"
+    RAINBOW_SIX = "rainbow_6"
+    LEAGUE_OF_LEGENDS = "league_of_legends"
+    HALO_INFINITE = "halo_infinite"
+
+
+class GGTrackerError(Exception):
+    pass
 
 
 class GGTrackerAPI:
     """GGTrackerAPI
     """
-    def __init__(self, game):
+    # =========================================================================>
+    # Default
+    def __init__(self, game = GAME.NOGAME):
         """ __init__ """
-        if isinstance(game, WebsiteAPI):
-            self.tracker = self._get_tracker_api_object(game)
+        self.game = game
+        self.tracker = None
+        self._init_tracker()
     
+    def __enter__(self):
+        """ __enter__ """
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """ __exit__ """
+        try:
+            self.tracker.quit()
+        except Exception as e:
+            print("_____", "close error")
+    
+    def __str__(self):
+        """ __str__ """
+        return "GGTrackerAPI with " + str(self.tracker)
+    
+    def __getattr__(self, name):
+        """__getattr__
+
+        Discription:
+            Wrapping tracker object
+        
+        Args:
+            name (str): attribute name
+
+        Returns:
+            obj: attribute
+        """
+        if name.startswith("get") or name.startswith("set") or name.startswith("find"):
+            attr_value = getattr(self.tracker, name)
+            if callable(attr_value):
+                return attr_value
+        return super().__getattr__(self, name)
+    
+    # =========================================================================>
+    # Class Method
     @classmethod
-    def _get_tracker_api_class(cls, game):
-        pass
+    def print_info(cls, message, mode = "i"):
+        if mode == "i":
+            message = "INFO: " + message
+            print(message)
+        elif mode == "w":
+            message = "WARN: " + message
+            print(message)
+            warnings.warn("", FutureWarning, stacklevel=4)
+        elif mode == "e":
+            message = "ERRR: " + message
+            print(message)
+            raise GGTrackerError()
+
+    # =========================================================================>
+    # SetGet
+    @property
+    def tracker(self):
+        """ get tracker """
+        return self.__tracker
+    
+    @tracker.setter
+    def tracker(self, t):
+        """ set tracker """
+        self.__tracker = t
+    
+    @property
+    def game(self):
+        """ get game """
+        return self.__game
+    
+    @game.setter
+    def game(self, g):
+        """ set game """
+        self.__game = g
+    
+    # =========================================================================>
+    # Utils
+    def _init_tracker(self):
+        if self.game == GAME.NOGAME:
+            self.tracker = WebsiteAPI()
+        elif self.game == GAME.VALORANT:
+            self.tracker = ValorantTrackerWebsiteAPI()
+        else:
+            self.print_info("this game tracker is not working in now version", mode = "w")
+            self.tracker = WebsiteAPI() # not yet
 
 
 if __name__ == "__main__":

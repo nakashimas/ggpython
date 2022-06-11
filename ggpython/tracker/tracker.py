@@ -13,10 +13,8 @@ CHROME_UPDATE = True
 # =============================================================================> 
 # imports default
 from xml.etree import ElementTree
-import urllib.parse
-import re
 import time
-import functools
+from abc import ABCMeta, abstractmethod
 
 # =============================================================================> 
 # imports third party
@@ -43,6 +41,13 @@ except Exception as e:
 
 # =============================================================================> 
 # define class
+
+class Singleton(object):
+    def __new__(cls, *args, **kargs):
+        if not hasattr(cls, "_instance"):
+            cls._instance = super(Singleton, cls).__new__(cls)
+        return cls._instance
+
 
 class WebsiteAPI(webdriver.Chrome):
     """WebsiteAPI
@@ -119,6 +124,29 @@ class WebsiteAPI(webdriver.Chrome):
         time.sleep(seconds)
         return element
 
+
+class TrackerWebsiteAPI(WebsiteAPI, Singleton, metaclass = ABCMeta):
+    @abstractmethod
+    def get_match_url_list(self):
+        """get_match_url_list
+        Discription:
+            get a list of game match result url
+        Return:
+            list : game match result url
+        """
+        return []
+    
+    @abstractmethod
+    def get_match_result_list(self):
+        """get_match_result_list
+        Discription:
+            get a list of game match result
+            1. call get_match_url_list
+            2. get a results from url list
+        Return:
+            dict : game match result
+        """
+        return {}
 
 # =============================================================================> 
 

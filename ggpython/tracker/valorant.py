@@ -32,16 +32,18 @@ VALORANT_AGENT_ICONS = {
 
 # =============================================================================> 
 # imports default
+import urllib.parse
 
 # =============================================================================> 
 # imports third party
+from selenium.webdriver.common.by import By
 
 # =============================================================================> 
 # imports local
 try:
-    from .tracker import WebsiteAPI
+    from .tracker import WebsiteAPI, TrackerWebsiteAPI
 except Exception as _:
-    from tracker import WebsiteAPI
+    from tracker import WebsiteAPI, TrackerWebsiteAPI
 
 # =============================================================================> 
 # define local metod
@@ -55,7 +57,7 @@ def dict_find_key(_dict, _value):
 # =============================================================================> 
 # define class
 
-class ValorantTrackerWebsiteAPI(WebsiteAPI):
+class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
     def __init__(self):
         super().__init__()
     
