@@ -25,10 +25,15 @@
 
 <h2> Contents </h2>
 
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [License](#license)
 - [Requirements](#requirements)
-  - [Release signature](#release-signature)
-  - [Development](#development)
-  - [Author](#author)
+- [Release signature](#release-signature)
+- [Development](#development)
+- [Author](#author)
 
 ## Description
 
@@ -115,7 +120,7 @@ This project is licensed under the terms of the [MIT](https://github.com/nakashi
 このプロジェクトは [MIT](https://github.com/nakashimas/ggpython/blob/master/LICENSE) ライセンスに基づいて管理されています。
 
 
-# Requirements
+## Requirements
 
 - selenium
 - chromedriver_binary
