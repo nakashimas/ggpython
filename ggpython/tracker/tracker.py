@@ -71,6 +71,7 @@ class WebsiteAPI(webdriver.Chrome, Singleton):
         finally:
             self._print_info("", mode = "d")
         
+        self._print_info("Initialize Chrome", mode = "p")
         self.options = webdriver.ChromeOptions()
         self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.options.add_argument('--ignore-certificate-errors')
@@ -81,6 +82,7 @@ class WebsiteAPI(webdriver.Chrome, Singleton):
         webdriver.Chrome.__init__(self, *args, options = self.options, **kwargs)
 
         self.set_window_size("12000", "11000")
+        self._print_info("", mode = "d")
     
     def __enter__(self):
         """ __enter__ """

@@ -81,8 +81,6 @@ class GGTrackerAPI(Singleton):
         super().__init__()
         self._print_info("Initialize " + str(self), mode = "i")
         self.game = game
-        self.tracker = None
-        self._init_tracker()
     
     def __enter__(self):
         """ __enter__ """
@@ -145,6 +143,7 @@ class GGTrackerAPI(Singleton):
     def game(self, g):
         """ set game """
         self.__game = g
+        self._init_tracker()
     
     @property
     def silence(self):
