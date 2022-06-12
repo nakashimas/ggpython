@@ -26,9 +26,10 @@
 <h2> Contents </h2>
 
 - [Description](#description)
-- [Usage](#usage)
 - [Installation](#installation)
+- [Usage](#usage)
 - [License](#license)
+- [Release signature](#release-signature)
 - [Author](#author)
 
 ## Description
@@ -36,9 +37,43 @@
 TrackerNetwork 非公式API。  
 Discord bot 用に作成しているものをPythonライブラリとして管理している。
 
-サポートしているゲーム
+Among its features... :
 
-- Valorant
+- ゲームの情報を取得する機能
+  - Valorant (Match, PlayableCharacter, Map, Weapon, Custom, Award, and its Summary)
+- 文字列整形機能
+  - for console standard output.
+  - for Discord text chat output.
+- スクレイピング用のChromiumエンジンWrapper
+
+For more information, refer to the [Documentation]().
+
+
+## Installation
+
+You can [Download](https://github.com/nakashimas/ggpython/releases) the latest installable version of _ggpython_ for Windows (zip format).
+
+The simplest way to install the latest version from PyPI is by using:
+
+```sh
+pip install --upgrade ggpython
+```
+
+If you want to install this for development purposes,  
+you can install directly from the GitHub repository:
+
+```sh
+git clone https://github.com/nakashimas/ggpython.git
+cd ggpython
+pip install .
+```
+
+also following:
+
+```sh
+pip install git+https://github.com/nakashimas/ggpython
+```
+
 
 ## Usage
 
@@ -68,21 +103,16 @@ print(convert_valorant_match_to_discord(res))
 
 Discordサーバに絵文字を登録しておく必要がある
 
-## Installation
-
-You can [Download](https://github.com/nakashimas/ggpython/releases) the latest installable version of _ggpython_ for Windows. (zip format)
-
-for pip install :  
-
-```py
-pip install git+https://github.com/nakashimas/ggpython
-```
-
 ## License
 
 This project is licensed under the terms of the [MIT](./LICENSE).
 
 このプロジェクトは [MIT](./LICENSE) ライセンスに基づいて管理されています。
+
+## Release signature
+
+- ggpython-0.0.1-none-any.whl
+- ggpython-0.0.1.tar.gz
 
 ## Author
 

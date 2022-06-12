@@ -24,8 +24,10 @@ with open('README.md', encoding = 'utf-8') as f:
 
 # =============================================================================> 
 # license
+print("--------------------")
 with open('LICENSE', encoding = 'utf-8') as f:
-    LICENSE = f.read()
+    LICENSE = " ".join([i.replace("\n", "") for i in f.readlines()][:2])
+    print(LICENSE)
 
 # =============================================================================> 
 # requires
