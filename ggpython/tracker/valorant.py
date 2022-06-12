@@ -220,8 +220,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         Args:
             user_name (str) : valorant user name
             user_tag (str)  : valorant user name such as #(.*?)
-            mode (str, optional): match playlist. Defaults to "unrated".
-                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+            mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get match summary", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
@@ -233,8 +232,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         Args:
             user_name (str) : valorant user name
             user_tag (str)  : valorant user name such as #(.*?)
-            mode (str, optional): match playlist. Defaults to "unrated".
-                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+            mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get pc summary", mode = "p")
         self._print_info("", mode = "d")
@@ -312,8 +310,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         Args:
             user_name (str) : valorant user name
             user_tag (str)  : valorant user name such as #(.*?)
-            mode (str, optional): match playlist. Defaults to "unrated".
-                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+            mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get pc result", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
@@ -327,8 +324,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         Args:
             user_name (str) : valorant user name
             user_tag (str)  : valorant user name such as #(.*?)
-            mode (str, optional): match playlist. Defaults to "unrated".
-                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+            mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get map result", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
@@ -340,8 +336,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         Args:
             user_name (str) : valorant user name
             user_tag (str)  : valorant user name such as #(.*?)
-            mode (str, optional): match playlist. Defaults to "unrated".
-                "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+            mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get weapon result", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
