@@ -140,7 +140,7 @@ You find requirements at also [requirements.txt](https://github.com/nakashimas/g
 We would love to have you as part of the community.
 If you find a bug / new-feature, feel free to write a new [Issue](https://github.com/nakashimas/ggpython/issues) with a *respective title* and *description* on this repository. 
 
-If you need help with an [Issue](https://github.com/nakashimas/ggpython/issues) or Development, please refer to the [guidelines]() or ask [me]().
+If you need help with an [Issue](https://github.com/nakashimas/ggpython/issues) or Development, please refer to the [guidelines](https://github.com/nakashimas/ggpython/blob/master/SAMPLE.md#development) or ask [me](https://github.com/nakashimas).
 
 
 ## Author
