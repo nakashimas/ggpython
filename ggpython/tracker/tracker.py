@@ -9,7 +9,6 @@
 # Definition
 
 CHROME_UPDATE = True
-SILENCE_MODE = False
 
 # =============================================================================> 
 # imports default
@@ -20,42 +19,14 @@ import warnings
 
 # =============================================================================> 
 # imports third party
-try:
-    if not SILENCE_MODE:
-        print("INFO: {:<50}".format("import web driver"), end = " ")
-    from selenium import webdriver
-    from selenium.common.exceptions import WebDriverException
-    from selenium.webdriver.common.action_chains import ActionChains
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions
-    from selenium.webdriver.common.by import By
-    import chromedriver_binary
-    import chromedriver_autoinstaller as chromedriver
-    if not SILENCE_MODE:
-        print("_____", "done", end = " ")
-except Exception as e:
-    if not SILENCE_MODE:
-        print()
-        print("ERRR: {:<50}".format(str(e)) + " _____ errr", end = " ")
-    exit()
-finally:
-    if not SILENCE_MODE:
-        print()
-
-try:
-    if CHROME_UPDATE:
-        if not SILENCE_MODE:
-            print("INFO: {:<50}".format("chromedriver auto install"), end = " ")
-        chromedriver.install()
-        if not SILENCE_MODE:
-            print("_____", "done", end = " ")
-except Exception as e:
-    if not SILENCE_MODE:
-        print()
-        print("ERRR: {:<50}".format(str(e)) + " _____ errr", end = " ")
-finally:
-    if not SILENCE_MODE:
-        print()
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.common.by import By
+import chromedriver_binary
+import chromedriver_autoinstaller as chromedriver
 
 # =============================================================================> 
 # imports local
@@ -73,7 +44,7 @@ class Singleton(object):
         return cls._instance
 
 
-class WebsiteAPI(webdriver.Chrome):
+class WebsiteAPI(webdriver.Chrome, Singleton):
     """WebsiteAPI
 
     Args:
@@ -83,10 +54,23 @@ class WebsiteAPI(webdriver.Chrome):
             https://stackoverflow.com/questions/67744514/timeout-exception-error-on-using-headless-chrome-webdriver
     """
     # =========================================================================>
+    # Class attr
+    silence = False
+
+    # =========================================================================>
     # Default
     def __init__(self, *args, **kwargs):
         """ __init__ """
-        self.silence = False
+        Singleton.__init__(self)
+        try:
+            if CHROME_UPDATE:
+                self._print_info("chromedriver auto install", mode = "p")
+                chromedriver.install()
+        except Exception as e:
+            self._print_info(str(e), mode = "e")
+        finally:
+            self._print_info("", mode = "d")
+        
         self.options = webdriver.ChromeOptions()
         self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.options.add_argument('--ignore-certificate-errors')
@@ -129,7 +113,7 @@ class WebsiteAPI(webdriver.Chrome):
         if options is None:
             raise TypeError('invalid options')
         self.__options = options
-
+    
     # =========================================================================>
     # Utils
     def _print_info(self, message, mode = "i"):
@@ -181,10 +165,13 @@ class WebsiteAPI(webdriver.Chrome):
         return element
 
 
-class TrackerWebsiteAPI(WebsiteAPI, Singleton, metaclass = ABCMeta):
+class TrackerWebsiteAPI(WebsiteAPI, metaclass = ABCMeta):
     """TrackerWebsiteAPI
     abstract class
     """
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
     @abstractmethod
     def get_match_summary(self, *args, **kwargs) -> dict:
         """get_match_summary

@@ -8,8 +8,6 @@
 # =============================================================================>
 # Definition
 
-SILENCE_MODE = False
-
 # =============================================================================>
 # imports default
 import warnings
@@ -69,13 +67,18 @@ class GGTrackerError(Exception):
     pass
 
 
-class GGTrackerAPI:
+class GGTrackerAPI(Singleton):
     """GGTrackerAPI
     """
+    # =========================================================================>
+    # Class attr
+    silence = False
+
     # =========================================================================>
     # Default
     def __init__(self, game = GAME.NOGAME):
         """ __init__ """
+        super().__init__()
         self._print_info("Initialize " + str(self), mode = "i")
         self.game = game
         self.tracker = None
@@ -120,28 +123,6 @@ class GGTrackerAPI:
     
     # =========================================================================>
     # Class Method
-    @classmethod
-    def _print_info(cls, message, mode = "i"):
-        """_print_info
-
-        Args:
-            message (str): printing message
-            mode (str, optional): 'i' or 'w' or 'e'. Defaults to "i".
-
-        Raises:
-            GGTrackerError: some of error
-        """
-        warnings.formatwarning = lambda message, category, *args, **kwargs: "WARN: %s ... %s" % (category.__name__, message)
-        if not SILENCE_MODE:
-            if mode == "i":
-                _message = "INFO: {:<50}".format(message)
-                print(_message)
-            elif mode == "w":
-                warnings.warn(message, FutureWarning, stacklevel=4)
-            elif mode == "e":
-                _message = "ERRR: {:<50}".format(message) + " _____ errr"
-                print(_message)
-                raise GGTrackerError()
 
     # =========================================================================>
     # SetGet
@@ -165,6 +146,18 @@ class GGTrackerAPI:
         """ set game """
         self.__game = g
     
+    @property
+    def silence(self):
+        """ get silence """
+        return self.__silence
+    
+    @silence.setter
+    def silence(self, s):
+        """ set silence """
+        self.__silence = s
+        if not self.tracker is None:
+            self.tracker.silence = s
+    
     # =========================================================================>
     # Utils
     def _init_tracker(self):
@@ -176,6 +169,28 @@ class GGTrackerAPI:
         else:
             self._print_info("this game tracker is not working in now version", mode = "w")
             self.tracker = WebsiteAPI() # not yet
+    
+    def _print_info(self, message, mode = "i"):
+        """_print_info
+
+        Args:
+            message (str): printing message
+            mode (str, optional): 'i' or 'w' or 'e'. Defaults to "i".
+
+        Raises:
+            GGTrackerError: some of error
+        """
+        warnings.formatwarning = lambda message, category, *args, **kwargs: "WARN: %s ... %s" % (category.__name__, message)
+        if not self.silence:
+            if mode == "i":
+                _message = "INFO: {:<50}".format(message)
+                print(_message)
+            elif mode == "w":
+                warnings.warn(message, FutureWarning, stacklevel=4)
+            elif mode == "e":
+                _message = "ERRR: {:<50}".format(message) + " _____ errr"
+                print(_message)
+                raise GGTrackerError()
 
 
 if __name__ == "__main__":

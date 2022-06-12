@@ -87,8 +87,10 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             - get duels
         """
         _output = {}
-
-        with WebsiteAPI() as match_driver:
+        _api = WebsiteAPI
+        _api.silence = True
+        
+        with _api() as match_driver:
             match_driver.get(match_url)
             
             match_driver.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".scoreboard__table:last-child")
