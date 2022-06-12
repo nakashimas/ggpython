@@ -20,20 +20,42 @@ import warnings
 
 # =============================================================================> 
 # imports third party
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.common.by import By
-import chromedriver_binary
-import chromedriver_autoinstaller as chromedriver
+try:
+    if not SILENCE_MODE:
+        print("INFO: {:<50}".format("import web driver"), end = " ")
+    from selenium import webdriver
+    from selenium.common.exceptions import WebDriverException
+    from selenium.webdriver.common.action_chains import ActionChains
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions
+    from selenium.webdriver.common.by import By
+    import chromedriver_binary
+    import chromedriver_autoinstaller as chromedriver
+    if not SILENCE_MODE:
+        print("_____", "done", end = " ")
+except Exception as e:
+    if not SILENCE_MODE:
+        print()
+        print("ERRR: {:<50}".format(str(e)) + " _____ errr", end = " ")
+    exit()
+finally:
+    if not SILENCE_MODE:
+        print()
 
 try:
     if CHROME_UPDATE:
+        if not SILENCE_MODE:
+            print("INFO: {:<50}".format("chromedriver auto install"), end = " ")
         chromedriver.install()
+        if not SILENCE_MODE:
+            print("_____", "done", end = " ")
 except Exception as e:
-    print("ERRR:", e)
+    if not SILENCE_MODE:
+        print()
+        print("ERRR: {:<50}".format(str(e)) + " _____ errr", end = " ")
+finally:
+    if not SILENCE_MODE:
+        print()
 
 # =============================================================================> 
 # imports local
@@ -64,6 +86,7 @@ class WebsiteAPI(webdriver.Chrome):
     # Default
     def __init__(self, *args, **kwargs):
         """ __init__ """
+        self.silence = False
         self.options = webdriver.ChromeOptions()
         self.options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.options.add_argument('--ignore-certificate-errors')
@@ -84,7 +107,7 @@ class WebsiteAPI(webdriver.Chrome):
         try:
             self.quit()
         except Exception as e:
-            print("_____", "close error")
+            self._print_info("can not close", mode = "e")
     
     def __str__(self):
         """ __str__ """
@@ -92,33 +115,7 @@ class WebsiteAPI(webdriver.Chrome):
     
     # =========================================================================>
     # Class Method
-    @classmethod
-    def _print_info(cls, message, mode = "i"):
-        """_print_info
 
-        Args:
-            message (str): printing message
-            mode (str, optional): 'i' or 'w' or 'e' or 'p'. Defaults to 'i'.
-
-        Raises:
-            Exception: some of error
-        """
-        if not SILENCE_MODE:
-            if mode == "i":
-                message = "INFO: " + message
-                print(message)
-            elif mode == "w":
-                message = "WARN: " + message
-                print(message)
-                warnings.warn("", FutureWarning, stacklevel=4)
-            elif mode == "e":
-                message = "ERRR: " + message
-                print(message)
-                raise Exception()
-            elif mode == "p":
-                message = "_____ " + message
-                print(message)
-    
     # =========================================================================>
     # SetGet
     @property
@@ -135,6 +132,34 @@ class WebsiteAPI(webdriver.Chrome):
 
     # =========================================================================>
     # Utils
+    def _print_info(self, message, mode = "i"):
+        """_print_info
+
+        Args:
+            message (str): printing message
+            mode (str, optional): 'i' or 'w' or 'e' or 'p'. Defaults to 'i'.
+
+        Raises:
+            Exception: some of error
+        """
+        warnings.formatwarning = lambda message, category, *args, **kwargs: "WARN: %s ... %s" % (category.__name__, message)
+        if not self.silence:
+            if mode == "i":
+                _message = "INFO: {:<50}".format(message)
+                print(_message)
+            elif mode == "w":
+                warnings.warn(message, FutureWarning, stacklevel=4)
+            elif mode == "e":
+                _message = "ERRR: {:<50}".format(message) + " _____ errr"
+                print(_message)
+                raise Exception()
+            elif mode == "p":
+                _message = "_____ {:<50}".format(message)
+                print(_message, end = " ")
+            elif mode == "d":
+                _message = "_____ done"
+                print(_message)
+    
     def wait_element(self, seconds, element_by = By.CLASS_NAME, target_string = "", timeout = 30):
         wait = WebDriverWait(self, timeout)
         element = wait.until(

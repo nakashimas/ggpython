@@ -60,8 +60,9 @@ def dict_find_key(_dict, _value):
 class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
     def __init__(self):
         """ __init__ """
-        self._print_info("Initialize ValorantTrackerWebsiteAPI", mode = "p")
         super().__init__()
+        self._print_info("Initialize ValorantTrackerWebsiteAPI", mode = "p")
+        self._print_info("", mode = "d")
     
     def __str__(self):
         """ __str__ """
@@ -222,6 +223,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         """
         self._print_info("get match summary", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("", mode = "d")
         return {}
     
     def get_pc_summary(self, user_name, user_tag, mode = "unrated"): # same as get_pc_result
@@ -233,6 +235,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
                 "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get pc summary", mode = "p")
+        self._print_info("", mode = "d")
         return self.get_pc_result(user_name, user_tag, mode = mode)
 
     def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated"):
@@ -267,6 +270,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             if len(a_tag) > 0:
                 match_url_list.append(a_tag[0].get_attribute("href"))
 
+        self._print_info("", mode = "d")
         return match_url_list
     
     def get_match_result(self, user_name, user_tag, n_match = None, mode = "unrated"):
@@ -282,12 +286,18 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             dict: result
         """
         self._print_info("get match result", mode = "p")
+        _silence = self.silence
+        self.silence = True
+
         match_url_list = self.get_match_url_list(user_name, user_tag, n_match = n_match, mode = mode)
 
         _output = []
         for i in match_url_list:
             _output.append(self._get_match_result(i))
-
+        
+        if not _silence:
+            self.silence = False
+        self._print_info("", mode = "d")
         return _output
 
     def get_pc_url_list(self, user_name, user_tag, mode = "unrated"): # unnecessary method !!!
@@ -305,6 +315,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         """
         self._print_info("get pc result", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("", mode = "d")
         return {}
 
     # =========================================================================>
@@ -317,7 +328,9 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated".
                 "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
+        self._print_info("get map result", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("", mode = "d")
         return {}
     
     def get_weapon_result(self, user_name, user_tag, mode = "unrated") -> dict:
@@ -328,7 +341,9 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated".
                 "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
+        self._print_info("get weapon result", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("", mode = "d")
         return {}
     
     def get_award_result(self, user_name, user_tag) -> dict:
@@ -337,7 +352,9 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             user_name (str) : valorant user name
             user_tag (str)  : valorant user name such as #(.*?)
         """
+        self._print_info("get award result", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("", mode = "d")
         return {}
     
     def get_custom_url_list(self, user_name, user_tag, n_match = None) -> list:
@@ -347,7 +364,9 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             user_tag (str)  : valorant user name such as #(.*?)
             n_match (int)   : number of match count. Defaults to None.
         """
+        self._print_info("get custom url list", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("", mode = "d")
         return []
     
     def get_custom_result(self, user_name, user_tag, n_match = None) -> dict:
@@ -357,7 +376,9 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             user_tag (str)  : valorant user name such as #(.*?)
             n_match (int)   : number of match count. Defaults to None.
         """
+        self._print_info("get custom result", mode = "p")
         self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("", mode = "d")
         return {}
 
 # =============================================================================> 

@@ -91,7 +91,7 @@ class GGTrackerAPI:
         try:
             self.tracker.quit()
         except Exception as e:
-            print("_____", "close error")
+            self._print_info("can not close", mode = "e")
     
     def __str__(self):
         """ __str__ """
@@ -131,17 +131,16 @@ class GGTrackerAPI:
         Raises:
             GGTrackerError: some of error
         """
+        warnings.formatwarning = lambda message, category, *args, **kwargs: "WARN: %s ... %s" % (category.__name__, message)
         if not SILENCE_MODE:
             if mode == "i":
-                message = "INFO: " + message
-                print(message)
+                _message = "INFO: {:<50}".format(message)
+                print(_message)
             elif mode == "w":
-                message = "WARN: " + message
-                print(message)
-                warnings.warn("", FutureWarning, stacklevel=4)
+                warnings.warn(message, FutureWarning, stacklevel=4)
             elif mode == "e":
-                message = "ERRR: " + message
-                print(message)
+                _message = "ERRR: {:<50}".format(message) + " _____ errr"
+                print(_message)
                 raise GGTrackerError()
 
     # =========================================================================>
