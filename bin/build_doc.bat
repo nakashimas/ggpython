@@ -1,7 +1,7 @@
 @ECHO OFF
 cd %~dp0/../
 sphinx-apidoc -f -o ./docs/source ./ggpython
-cd ./docs
+cd ./docs/
 
 pushd %~dp0
 
@@ -29,6 +29,7 @@ if errorlevel 9009 (
 if "%1" == "" goto help
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+move %BUILDDIR%\%1\*.* %BUILDDIR% 2>NUL
 goto end
 
 :help
