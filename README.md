@@ -132,7 +132,9 @@ You find requirements at also [requirements.txt](https://github.com/nakashimas/g
 ## Release signature
 
 - ggpython-0.0.1-py3-none-any.whl
+  [8911cbf92503c45e6b4c18f53033b771ce545b37bf00f8743bfbba18a501f377]
 - ggpython-0.0.1.tar.gz
+  [be405782ed1e18bf8dcab56ac8aae6f4f12545dfecc3a1f061d229f25342a103]
 
 
 ## Development
