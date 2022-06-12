@@ -28,8 +28,10 @@
 - [Description](#description)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Documentation](#documentation)
 - [License](#license)
 - [Release signature](#release-signature)
+- [Development](#development)
 - [Author](#author)
 
 ## Description
@@ -103,16 +105,32 @@ print(convert_valorant_match_to_discord(res))
 
 Discordサーバに絵文字を登録しておく必要がある
 
+
+## Documentation
+
+Document is available from [there]().
+
+
 ## License
 
 This project is licensed under the terms of the [MIT](./LICENSE).
 
 このプロジェクトは [MIT](./LICENSE) ライセンスに基づいて管理されています。
 
+
 ## Release signature
 
-- ggpython-0.0.1-none-any.whl
+- ggpython-0.0.1-py3-none-any.whl
 - ggpython-0.0.1.tar.gz
+
+
+## Development
+
+We would love to have you as part of the community.
+If you find a bug / new-feature, feel free to write a new [Issue](https://github.com/nakashimas/ggpython/issues) with a *respective title* and *description* on this repository. 
+
+If you need help with an [Issue](https://github.com/nakashimas/ggpython/issues) or Development, please refer to the [guidelines]() or ask [me]().
+
 
 ## Author
 

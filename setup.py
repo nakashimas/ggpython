@@ -56,7 +56,7 @@ DESCRIPTION = "Tracker Network Wrapper In Python."
 
 # =============================================================================> 
 # version
-VERSION = "0.0.0"
+VERSION = "0.0.1"
 
 CLASSIFIERS = [
     'Development Status :: 1 - Planning',
