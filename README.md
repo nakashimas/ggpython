@@ -25,14 +25,10 @@
 
 <h2> Contents </h2>
 
-- [Description](#description)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Documentation](#documentation)
-- [License](#license)
-- [Release signature](#release-signature)
-- [Development](#development)
-- [Author](#author)
+- [Requirements](#requirements)
+  - [Release signature](#release-signature)
+  - [Development](#development)
+  - [Author](#author)
 
 ## Description
 
@@ -48,7 +44,8 @@ Among its features... :
   - for Discord text chat output.
 - スクレイピング用のChromiumエンジンWrapper
 
-For more information, refer to the [Documentation]().
+For more information, refer to the [Documentation](https://nakashimas.github.io/ggpython/html/index.html) 
+or [Sample](https://github.com/nakashimas/ggpython/blob/master/SAMPLE.md).
 
 
 ## Installation
@@ -108,14 +105,23 @@ Discordサーバに絵文字を登録しておく必要がある
 
 ## Documentation
 
-Document is available from [there]().
+Document is available from [there](https://nakashimas.github.io/ggpython/html/index.html).
 
 
 ## License
 
-This project is licensed under the terms of the [MIT](./LICENSE).
+This project is licensed under the terms of the [MIT](https://github.com/nakashimas/ggpython/blob/master/LICENSE).
 
-このプロジェクトは [MIT](./LICENSE) ライセンスに基づいて管理されています。
+このプロジェクトは [MIT](https://github.com/nakashimas/ggpython/blob/master/LICENSE) ライセンスに基づいて管理されています。
+
+
+# Requirements
+
+- selenium
+- chromedriver_binary
+- chromedriver_autoinstaller
+
+You find requirements at also [requirements.txt](https://github.com/nakashimas/ggpython/blob/master/requirements.txt).
 
 
 ## Release signature
