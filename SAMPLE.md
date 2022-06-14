@@ -10,6 +10,8 @@
 - [Description](#description)
 - [Valorant](#valorant)
 - [Development](#development)
+  - [Branch](#branch)
+  - [Class And Method Definition](#class-and-method-definition)
 
 ## Description
 
@@ -45,4 +47,59 @@ Discordサーバに絵文字を登録しておく必要がある
 
 ## Development
 
+### Branch
+
+*Master Branch*
+
+PyPI等に公開しているものと同じにする  
+mainに変えるかは検討中
+
+*Develop Branch*
+
+現時点ではバージョンで分けない  
+もし必要なら以下のように書く:
+
+```
+git checkout -b develop/[version]
+```
+
+*gh-pages Branch*
+
+Document公開用  
+`./docs/*`以下をsubmoduleとしている
+
+*Feature Branch*
+
+feature branchを利用する場合は、まず、Issueを投稿して  
+以下のように書く:
+
+```
+git checkout -b [version]_#[issue_number]_[issue_title]
+```
+
+*Release Branch*
+
+release branchは現時点では切らなくてもいい方針  
+developに直接書く  
+もし必要なら以下のように書く:
+
+```
+git checkout -b [version]_release_[issue_title]
+```
+
+この際のversionはreleaseで扱うものを指す
+
+*Fix Branch*
+
+hotfix branchは現時点では切らなくてもいい方針  
+developかmasterに直接書く  
+もし必要なら以下のように書く:
+
+```
+git checkout -b [version]_hotfix_[issue_title]
+```
+
+### Class And Method Definition
+
 編集中
+
