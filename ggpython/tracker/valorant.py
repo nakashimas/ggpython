@@ -215,7 +215,53 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         target_url = VALORANT_TRACKER_WEBSITE + "profile/riot/" + target_url # アップデートで使用不可になったら変更する
         super().get(target_url)
     
-    def get_match_summary(self, user_name, user_tag, mode = "unrated"):
+    def get_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
+        """get_summary
+        Discription:
+            get a game summary
+        Return:
+            dict : game summary
+        """
+        self._print_info("get summary", mode = "p")
+        self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
+        
+        # start
+        self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".scoreboard__table:last-child")
+        team_elements = match_driver.find_elements(By.CSS_SELECTOR, ".scoreboard__table tbody")
+
+        # =====================================================================>
+        # get overview summary
+        # > KAD, Win, Lose,
+        # > Damage by round, KD, HS, Kills, Headshots, Death, Assists, Score by round,
+        # > Kills by round, FB, Ace, Clutch, Flawless, Most kill
+        # =====================================================================>
+        # get current ratings -> only competitive 
+        # > Rating, Peak rating
+        # =====================================================================>
+        # get accuracy -> only all acts
+        # > Head Count, Body Count, Leg Count
+        # =====================================================================>
+        # get weapons summary
+        # > Weapon name
+        # > > Head%, Body%, Leg%, Kills
+        # =====================================================================>
+        # get top agents summary
+        # > Agent name
+        # > > Time Played, Matches, Win%, KD, ADR, ACS, HS%
+        # =====================================================================>
+        # get top maps summary
+        # > Map name
+        # > > Win, Lose
+        # =====================================================================>
+        # get last 20 match summary
+        # > Win, Lose, KD, ADR
+        # > Agent name
+        # > > Win, Lose, KD
+        
+        self._print_info("", mode = "d")
+        return {}
+    
+    def get_match_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
         """get_match_summary
         Args:
             user_name (str) : valorant user name
@@ -223,11 +269,11 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get match summary", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
         self._print_info("", mode = "d")
         return {}
     
-    def get_pc_summary(self, user_name, user_tag, mode = "unrated"): # same as get_pc_result
+    def get_pc_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
         """get_pc_summary
         Args:
             user_name (str) : valorant user name
@@ -235,10 +281,11 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get pc summary", mode = "p")
+        self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
         self._print_info("", mode = "d")
-        return self.get_pc_result(user_name, user_tag, mode = mode)
+        return {}
 
-    def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated"):
+    def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated", act = "all") -> list:
         """get_match_url_list
 
         Args:
@@ -252,7 +299,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         """
         self._print_info("get match url list", mode = "p")
         # アクセス
-        self.get(user_name, user_tag, tracker_query = {"playlist" : mode})
+        self.get(user_name, user_tag, tracker_query = {"playlist" : mode, "season" : act})
         
         # リスト取得
         self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".match:last-child")
@@ -273,7 +320,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         self._print_info("", mode = "d")
         return match_url_list
     
-    def get_match_result(self, user_name, user_tag, n_match = None, mode = "unrated"):
+    def get_match_result(self, user_name, user_tag, n_match = None, mode = "unrated", act = "all") -> list:
         """get_match_result
 
         Args:
@@ -289,7 +336,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         _silence = self.silence
         self.silence = True
 
-        match_url_list = self.get_match_url_list(user_name, user_tag, n_match = n_match, mode = mode)
+        match_url_list = self.get_match_url_list(user_name, user_tag, n_match = n_match, mode = mode, act = act)
 
         _output = []
         for i in match_url_list:
@@ -300,12 +347,12 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         self._print_info("", mode = "d")
         return _output
 
-    def get_pc_url_list(self, user_name, user_tag, mode = "unrated"): # unnecessary method !!!
+    def get_pc_url_list(self, user_name, user_tag, mode = "unrated", act = "all") -> list: # unnecessary method !!!
         """ get_pc_url_list """
         self._print_info("This is not working in valorant", mode = "e")
         return []
     
-    def get_pc_result(self, user_name, user_tag, mode = "unrated"):
+    def get_pc_result(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_pc_result
         Args:
             user_name (str) : valorant user name
@@ -319,7 +366,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
 
     # =========================================================================>
     # Utils valorant original
-    def get_map_result(self, user_name, user_tag, mode = "unrated") -> dict:
+    def get_map_result(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
         """get_map_result
         Args:
             user_name (str) : valorant user name
@@ -331,7 +378,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         self._print_info("", mode = "d")
         return {}
     
-    def get_weapon_result(self, user_name, user_tag, mode = "unrated") -> dict:
+    def get_weapon_result(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
         """get_weapon_result
         Args:
             user_name (str) : valorant user name

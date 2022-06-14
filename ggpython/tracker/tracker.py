@@ -175,6 +175,16 @@ class TrackerWebsiteAPI(WebsiteAPI, metaclass = ABCMeta):
         super().__init__()
 
     @abstractmethod
+    def get_summary(self, *args, **kwargs) -> dict:
+        """get_summary
+        Discription:
+            get a game summary
+        Return:
+            dict : game summary
+        """
+        return {}
+
+    @abstractmethod
     def get_match_summary(self, *args, **kwargs) -> dict:
         """get_match_summary
         Discription:
@@ -205,16 +215,16 @@ class TrackerWebsiteAPI(WebsiteAPI, metaclass = ABCMeta):
         return []
     
     @abstractmethod
-    def get_match_result(self, *args, **kwargs) -> dict:
+    def get_match_result(self, *args, **kwargs) -> list:
         """get_match_result
         Discription:
             get a list of game match result
             1. call get_match_url_list
             2. get a results from url list
         Return:
-            dict : game match result
+            list : game match result
         """
-        return {}
+        return []
 
     @abstractmethod
     def get_pc_url_list(self, *args, **kwargs) -> list:
@@ -227,16 +237,16 @@ class TrackerWebsiteAPI(WebsiteAPI, metaclass = ABCMeta):
         return []
     
     @abstractmethod
-    def get_pc_result(self, *args, **kwargs) -> dict:
+    def get_pc_result(self, *args, **kwargs) -> list:
         """get_pc_result
         Discription:
             get a list of game pc result
             1. call get_pc_url_list
             2. get a results from url list
         Return:
-            dict : game pc result
+            list : game pc result
         """
-        return {}
+        return []
 
 # =============================================================================> 
 
