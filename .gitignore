@@ -161,3 +161,5 @@ cython_debug/
 
 ggpython/analysis.py
 .pypirc
+
+docs
