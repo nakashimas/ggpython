@@ -16,6 +16,7 @@ from xml.etree import ElementTree
 import time
 from abc import ABCMeta, abstractmethod
 import warnings
+import random
 
 # =============================================================================> 
 # imports third party
@@ -101,7 +102,10 @@ class WebsiteAPI(webdriver.Chrome, Singleton):
     
     # =========================================================================>
     # Class Method
-
+    @classmethod
+    def random_sleep(cls, sec = 2, base = 0):
+        time.sleep(random.random() * sec + base)
+    
     # =========================================================================>
     # SetGet
     @property

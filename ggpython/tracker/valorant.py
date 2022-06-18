@@ -331,7 +331,6 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         _top_agents_head = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.st-header div.st-header__item span.label")]
         _top_agents = []
         for i in self.find_elements(By.CSS_SELECTOR, "div.top-agents div.st-content"):
-            print(i)
             for j in i.find_elements(By.CSS_SELECTOR,"div.st-content__item"):
                 _tmp = {}
                 for k, l in zip(_top_agents_head, j.find_elements(By.CSS_SELECTOR,"div.st__item")):
@@ -350,8 +349,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
 
         self._print_info("_____ **its all of summary**", mode = "p")
         self._print_info("", mode = "d")
-        print(_output)
-        return {}
+        return _output
     
     def get_match_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
         """get_match_summary
@@ -365,7 +363,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         self._print_info("", mode = "d")
         return {}
     
-    def get_pc_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
+    def get_pc_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_pc_summary
         Args:
             user_name (str) : valorant user name
@@ -373,9 +371,26 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get pc summary", mode = "p")
+        
         self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
+        self.random_sleep()
+
+        # =====================================================================>
+        # get top agents summary
+        # > Agent name
+        # > > Time Played, Matches, Win%, KD, ADR, ACS, HS%
+
+        _top_agents_head = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.st-header div.st-header__item span.label")]
+        _top_agents = []
+        for i in self.find_elements(By.CSS_SELECTOR, "div.top-agents div.st-content"):
+            for j in i.find_elements(By.CSS_SELECTOR,"div.st-content__item"):
+                _tmp = {}
+                for k, l in zip(_top_agents_head, j.find_elements(By.CSS_SELECTOR,"div.st__item")):
+                    _tmp[k] = [m.text for m in l.find_elements(By.CSS_SELECTOR, "div.info div.value, div.small")]
+                _top_agents.append(_tmp)
+        
         self._print_info("", mode = "d")
-        return {}
+        return _top_agents
 
     def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated", act = "all") -> list:
         """get_match_url_list
