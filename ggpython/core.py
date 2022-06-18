@@ -116,7 +116,8 @@ class GGTrackerAPI(Singleton):
         if (not name.startswith("_")) and (not name.startswith("game")) and (not name.startswith("tracker")):
             attr_value = getattr(self.tracker, name)
             if callable(attr_value):
-                self._print_info("Touch " + str(self.tracker) + " info", mode = "i")
+                if not name.startswith("quit"):
+                    self._print_info("Touch " + str(self.tracker) + " info", mode = "i")
                 return attr_value
     
     # =========================================================================>
