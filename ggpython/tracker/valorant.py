@@ -382,6 +382,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
 
         _top_agents_head = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.st-header div.st-header__item span.label")]
         _top_agents = []
+        
         for i in self.find_elements(By.CSS_SELECTOR, "div.top-agents div.st-content"):
             for j in i.find_elements(By.CSS_SELECTOR,"div.st-content__item"):
                 _tmp = {}
