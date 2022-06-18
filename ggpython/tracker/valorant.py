@@ -223,42 +223,134 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             dict : game summary
         """
         self._print_info("get summary", mode = "p")
+        self._print_info("aready", mode = "d")
         self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
+        self.random_sleep()
         
         # start
-        self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".scoreboard__table:last-child")
-        team_elements = match_driver.find_elements(By.CSS_SELECTOR, ".scoreboard__table tbody")
+        # self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".scoreboard__table:last-child")
 
+        _output = {}
         # =====================================================================>
         # get overview summary
-        # > KAD, Win, Lose,
-        # > Damage by round, KD, HS, Kills, Headshots, Death, Assists, Score by round,
-        # > Kills by round, FB, Ace, Clutch, Flawless, Most kill
+        # > Play Time, Match Count, KAD, Win, Lose,
+        self._print_info("_____ Overview", mode = "p")
+        
+        _output["PlayTime"] = self.find_element(By.CSS_SELECTOR, "div.segment-stats.area-main-stats span.playtime").text.split(" ")[0]
+        _output["MatchCount"] = self.find_element(By.CSS_SELECTOR, "div.segment-stats.area-main-stats span.matches").text.split(" ")[0]
+        _output["KAD"] = self.find_element(By.CSS_SELECTOR, "div.trn-profile-highlighted-content__stats div.stat span.stat__value").text
+        _output["WinLose"] = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.trn-profile-highlighted-content__ratio g text")[:2]]
+        
+        # > Damage by round, KD, HSP
+        for i in self.find_elements(By.CSS_SELECTOR, "div.giant-stats div.stat.align-left.giant.expandable"):
+            _tmp = i.find_element(By.CSS_SELECTOR, "div.numbers")
+            _output[_tmp.find_element(By.CSS_SELECTOR, "span.name").text] = _tmp.find_element(By.CSS_SELECTOR, "span.value").text
+
+        # > Kills, Headshots, Death, Assists, Score by round, Kills by round, FB, Ace, Clutch, Flawless, Most kill
+        for i in self.find_elements(By.CSS_SELECTOR, "div.main div.stat.align-left.giant.expandable"):
+            _tmp = i.find_element(By.CSS_SELECTOR, "div.numbers")
+            _output[_tmp.find_element(By.CSS_SELECTOR, "span.name").text] = _tmp.find_element(By.CSS_SELECTOR, "span.value").text
+        
+        self._print_info("", mode = "d")
+
         # =====================================================================>
         # get current ratings -> only competitive 
         # > Rating, Peak rating
-        # =====================================================================>
         # get accuracy -> only all acts
         # > Head Count, Body Count, Leg Count
-        # =====================================================================>
         # get weapons summary
         # > Weapon name
         # > > Head%, Body%, Leg%, Kills
+        # get top maps summary
+        # > Map name
+        # > > Win, Lose
+        for i in self.find_elements(By.CSS_SELECTOR, "div.area-sidebar div.card"):
+            _title = i.find_element(By.CSS_SELECTOR, "div.title").text
+            if _title == "Current Ratings":
+                self._print_info("_____ CurrentRatings", mode = "p")
+                
+                _rating, _peak = [j for j in i.find_elements(By.CSS_SELECTOR, "div.rating-entry div.value")][:2] # Rating
+                # Peak rating
+                _rating_sub, _peak_sub = [j for j in i.find_elements(By.CSS_SELECTOR, "div.rating-entry div.subtext")][:2] # Rating
+                
+                _output["Rating"] = _rating + _rating_sub
+                _output["PeakRating"] = _peak + _peak_sub
+                
+                self._print_info("", mode = "d")
+            elif _title == "Accuracy":
+                self._print_info("_____ CurrentRatings", mode = "p")
+                
+                _tmp = [j.text for j in i.find_elements(By.CSS_SELECTOR, "table.accuracy__stats td:nth-child(3) span.stat__value")]
+                
+                _output["Head"] = _tmp[0]
+                _output["Body"] = _tmp[1]
+                _output["Legs"] = _tmp[2]
+                
+                self._print_info("", mode = "d")
+            elif _title == "Top Weapons":
+                self._print_info("_____ Weapons", mode = "p")
+                _tmp_weapon = []
+                
+                for j in i.find_elements(By.CSS_SELECTOR, "div.top-weapons__weapons div.weapon"):
+                    _tmp = {}
+                    
+                    _tmp["Name"] = j.find_element(By.CSS_SELECTOR, "div.weapon__info div.weapon__name").text
+                    _tmp["Type"] = j.find_element(By.CSS_SELECTOR, "div.weapon__info div.weapon__type").text
+                    _tmp["Kill"] = j.find_element(By.CSS_SELECTOR, "div.weapon__main-stat span.value").text
+                    for k, l in zip(["Head", "Body", "Legs"], j.find_elements(By.CSS_SELECTOR, "div.weapon__accuracy-hits span.stat")):
+                        _tmp[k] = l.text
+                    
+                    _tmp_weapon.append(_tmp)
+                
+                _output["Weapon"] = _tmp_weapon
+                self._print_info("", mode = "d")
+            elif _title == "Top Maps":
+                self._print_info("_____ Maps", mode = "p")
+                _tmp_map = []
+
+                for j in i.find_elements(By.CSS_SELECTOR, "div.top-maps__maps-map"):
+                    _tmp = {}
+                    
+                    _tmp["Name"] = j.find_element(By.CSS_SELECTOR, "div.name").text
+                    
+                    _wl = j.find_element(By.CSS_SELECTOR, "div.info div.label").text.split(" ")
+                    _tmp["Win"] = _wl[0][:-1]
+                    _tmp["Lose"] = _wl[2][:-1]
+                    
+                    _tmp_map.append(_tmp)
+                
+                _output["Map"] = _tmp_map
+                self._print_info("", mode = "d")
+        
         # =====================================================================>
         # get top agents summary
         # > Agent name
         # > > Time Played, Matches, Win%, KD, ADR, ACS, HS%
+        self._print_info("_____ TopAgents", mode = "p")
+
+        _top_agents_head = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.st-header div.st-header__item span.label")]
+        _top_agents = []
+        for i in self.find_elements(By.CSS_SELECTOR, "div.top-agents div.st-content"):
+            print(i)
+            for j in i.find_elements(By.CSS_SELECTOR,"div.st-content__item"):
+                _tmp = {}
+                for k, l in zip(_top_agents_head, j.find_elements(By.CSS_SELECTOR,"div.st__item")):
+                    _tmp[k] = [m.text for m in l.find_elements(By.CSS_SELECTOR, "div.info div.value, div.small")]
+                _top_agents.append(_tmp)
+        
+        _output["Agent"] = _top_agents
+
+        self._print_info("", mode = "d")
+        
         # =====================================================================>
-        # get top maps summary
-        # > Map name
-        # > > Win, Lose
-        # =====================================================================>
-        # get last 20 match summary
+        # get last 20 match summary **未実装**
         # > Win, Lose, KD, ADR
         # > Agent name
         # > > Win, Lose, KD
-        
+
+        self._print_info("_____ **its all of summary**", mode = "p")
         self._print_info("", mode = "d")
+        print(_output)
         return {}
     
     def get_match_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
