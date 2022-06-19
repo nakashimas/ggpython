@@ -520,9 +520,47 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get pc result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self.get(user_name, user_tag, tracker = "agents", tracker_query = {"playlist" : mode, "season" : act})
+
+        self.wait_element_clickable(2.0, element_by = By.CSS_SELECTOR, target_string = "div.expand-all span").click() # div.expand-all is not clickable
+        _info_parent_elements_a = self.find_elements(By.CSS_SELECTOR, "div.agent div.agent__content") # 基本
+        _info_parent_elements_b = self.find_elements(By.CSS_SELECTOR, "div.agent-drawer div.agent-drawer__content") # 詳細
+
+        _output = []
+        for i, j in zip(_info_parent_elements_a, _info_parent_elements_b):
+            _agent = {}
+            
+            # get i values
+            _agent["Name"] = i.find_element(By.CSS_SELECTOR, "div.agent__agent span.agent__name-name").text
+            _agent["PlayTime"] = i.find_element(By.CSS_SELECTOR, "div.agent__agent span.agent__name-time").text
+            
+            _agent_stats = i.find_elements(By.CSS_SELECTOR, "div.agent__stat")
+            _agent["Matches"] = _agent_stats[0].text
+            _agent["Win %"] = _agent_stats[1].text
+            _agent["K/D Ratio"] = _agent_stats[2].text
+            _agent["Kill"] = _agent_stats[3].text.split(" / ")[0] # kk / dd / aa
+            _agent["Death"] = _agent_stats[3].text.split(" / ")[1] # kk / dd / aa
+            _agent["Assist"] = _agent_stats[3].text.split(" / ")[2] # kk / dd / aa
+            _agent["ADR"] = _agent_stats[4].text
+            _agent["ACS"] = _agent_stats[5].text
+            
+            _agent["Ability"] = [k.text for k in i.find_elements(By.CSS_SELECTOR, "div.ability span.ability__value")]
+            
+            # get j values
+            for k in j.find_elements(By.CSS_SELECTOR, "div.agent-drawer__key-stats div.key-stat__text"):
+                _agent[k.find_element(By.CSS_SELECTOR, "span.key-stat__label").text] = k.find_element(By.CSS_SELECTOR, "span.key-stat__value").text
+            
+            for k in j.find_elements(By.CSS_SELECTOR, "div.agent-drawer__objective"):
+                _title = k.find_element(By.CSS_SELECTOR, "div.agent-drawer__objective-title span").text
+                _agent[_title + "_Win"] = k.find_elements(By.CSS_SELECTOR, "div.agent-winloss div.stat")[0].text.replace(" W", "")
+                _agent[_title + "_Lose"] = k.find_elements(By.CSS_SELECTOR, "div.agent-winloss div.stat")[1].text.replace(" L", "")
+                for l in k.find_elements(By.CSS_SELECTOR, "div.agent-drawer__objective-stats div.stat"):
+                    _agent[_title + "_" + l.find_element(By.CSS_SELECTOR, "span.stat__label").text] = l.find_element(By.CSS_SELECTOR, "span.stat__value").text
+                
+            _output.append(_agent)
+
         self._print_info("", mode = "d")
-        return {}
+        return _output
 
     # =========================================================================>
     # Utils valorant original
@@ -550,15 +588,13 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         self._print_info("", mode = "d")
         return {}
     
-    def get_award_result(self, user_name, user_tag) -> dict:
+    def get_award_result(self, user_name, user_tag) -> dict: # unnecessary method !!!
         """get_award_result
         Args:
             user_name (str) : valorant user name
             user_tag (str)  : valorant user name such as #(.*?)
         """
-        self._print_info("get award result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
-        self._print_info("", mode = "d")
+        self._print_info("This is not working in valorant", mode = "e")
         return {}
     
     def get_custom_url_list(self, user_name, user_tag, n_match = None) -> list:
