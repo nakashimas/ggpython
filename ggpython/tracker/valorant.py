@@ -564,7 +564,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
 
     # =========================================================================>
     # Utils valorant original
-    def get_map_result(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
+    def get_map_result(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_map_result
         Args:
             user_name (str) : valorant user name
@@ -576,7 +576,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         self._print_info("", mode = "d")
         return {}
     
-    def get_weapon_result(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
+    def get_weapon_result(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_weapon_result
         Args:
             user_name (str) : valorant user name
@@ -584,9 +584,29 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get weapon result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self.get(user_name, user_tag, tracker = "weapons", tracker_query = {"playlist" : mode, "season" : act})
+
+        self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = "div.segment-used__table table tbody tr:last-child")
+
+        _header = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.segment-used__table table thead tr th")]
+        _output = []
+
+        for i in self.find_elements(By.CSS_SELECTOR, "div.segment-used__table table tbody tr"):
+            _top = True
+            _weapon = {}
+            
+            for j, k in zip(_header, i.find_elements(By.TAG_NAME, "td")):
+                if _top:
+                    _weapon["Name"] = k.find_element(By.CSS_SELECTOR, "span.segment-used__tp-name").text
+                    _weapon["Type"] = k.find_element(By.CSS_SELECTOR, "span.segment-used__tp-sub").text
+                    _top = False
+                else:
+                    _weapon[j] = k.find_element(By.TAG_NAME, "span").text
+            
+            _output.append(_weapon)
+
         self._print_info("", mode = "d")
-        return {}
+        return _output
     
     def get_award_result(self, user_name, user_tag) -> dict: # unnecessary method !!!
         """get_award_result
