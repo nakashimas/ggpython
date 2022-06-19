@@ -342,10 +342,33 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         self._print_info("", mode = "d")
         
         # =====================================================================>
-        # get last 20 match summary **未実装**
+        # get last 20 match summary
         # > Win, Lose, KD, ADR
         # > Agent name
         # > > Win, Lose, KD
+        _last_20_matches = {}
+        
+        _tmp_last_20_matches = self.find_element(By.CSS_SELECTOR, "div.area-matches>div.card div.trn-gamereport-stats div.left")
+        _last_20_matches["Win"] = _tmp_last_20_matches.find_element(By.CSS_SELECTOR, "span.wins").text
+        _last_20_matches["Lose"] = _tmp_last_20_matches.find_element(By.CSS_SELECTOR, "span.losses").text
+        _last_20_matches["KD"] = _tmp_last_20_matches.find_elements(By.CSS_SELECTOR, "span.highlight")[0].text
+        _last_20_matches["ADR"] = _tmp_last_20_matches.find_elements(By.CSS_SELECTOR, "span.highlight")[1].text
+
+        _tmp_last_20_matches_agent = []
+
+        for i in self.find_elements(By.CSS_SELECTOR, "div.area-matches>div.card div.trn-gamereport-stats div.right div.trn-gamereport-stats__mini-stat"):
+            _tmp = {}
+            
+            _tmp["Name"] = dict_find_key(VALORANT_AGENT_ICONS, str(i.find_element(By.TAG_NAME, "img").get_attribute("src")))
+            _tmp["Win"] = i.find_element(By.CSS_SELECTOR, "div.title").text.split(" ")[0].replace("W", "")
+            _tmp["Lose"] = i.find_element(By.CSS_SELECTOR, "div.title").text.split(" ")[2].replace("L", "")
+            _tmp["KD"] = i.find_element(By.CSS_SELECTOR, "div.subtitle").text.split(" ")[1]
+
+            _tmp_last_20_matches_agent.append(_tmp)
+        
+        _last_20_matches["Agent"] = _tmp_last_20_matches_agent
+
+        _output["Match"] = _last_20_matches
 
         self._print_info("_____ **its all of summary**", mode = "p")
         self._print_info("", mode = "d")
@@ -359,9 +382,34 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get match summary", mode = "p")
+        
         self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
+        self.random_sleep()
+
+        _last_20_matches = {}
+        
+        _tmp_last_20_matches = self.find_element(By.CSS_SELECTOR, "div.area-matches>div.card div.trn-gamereport-stats div.left")
+        _last_20_matches["Win"] = _tmp_last_20_matches.find_element(By.CSS_SELECTOR, "span.wins").text
+        _last_20_matches["Lose"] = _tmp_last_20_matches.find_element(By.CSS_SELECTOR, "span.losses").text
+        _last_20_matches["KD"] = _tmp_last_20_matches.find_elements(By.CSS_SELECTOR, "span.highlight")[0].text
+        _last_20_matches["ADR"] = _tmp_last_20_matches.find_elements(By.CSS_SELECTOR, "span.highlight")[1].text
+
+        _tmp_last_20_matches_agent = []
+
+        for i in self.find_elements(By.CSS_SELECTOR, "div.area-matches>div.card div.trn-gamereport-stats div.right div.trn-gamereport-stats__mini-stat"):
+            _tmp = {}
+            
+            _tmp["Name"] = dict_find_key(VALORANT_AGENT_ICONS, str(i.find_element(By.TAG_NAME, "img").get_attribute("src")))
+            _tmp["Win"] = i.find_element(By.CSS_SELECTOR, "div.title").text.split(" ")[0].replace("W", "")
+            _tmp["Lose"] = i.find_element(By.CSS_SELECTOR, "div.title").text.split(" ")[2].replace("L", "")
+            _tmp["KD"] = i.find_element(By.CSS_SELECTOR, "div.subtitle").text.split(" ")[1]
+
+            _tmp_last_20_matches_agent.append(_tmp)
+        
+        _last_20_matches["Agent"] = _tmp_last_20_matches_agent
+
         self._print_info("", mode = "d")
-        return {}
+        return _last_20_matches
     
     def get_pc_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_pc_summary
