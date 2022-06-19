@@ -566,15 +566,52 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
     # Utils valorant original
     def get_map_result(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_map_result
+
         Args:
             user_name (str) : valorant user name
-            user_tag (str)  : valorant user name such as #(.*?)
-            mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+            user_tag (str) : valorant user name such as #(.*?)
+            mode (str, optional) : match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+        
+        Returns:
+            list : map result
         """
         self._print_info("get map result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self.get(user_name, user_tag, tracker = "maps", tracker_query = {"playlist" : mode, "season" : act})
+
+        # 詳細を開くボタンを全てクリック
+        self.wait_element_clickable(2.0, element_by = By.CSS_SELECTOR, target_string = "div.st-content__item-expand")
+        for i in self.find_elements(By.CSS_SELECTOR, "div.st-content__item-expand"):
+            i.click()
+
+        _info_parent_elements_a = self.find_elements(By.CSS_SELECTOR, "div.st-content div.st-content__item") # 基本
+        _info_parent_elements_b = self.find_elements(By.CSS_SELECTOR, "div.st-content div.st-content__drawer") # 詳細
+
+        _output = []
+        for i, j in zip(_info_parent_elements_a, _info_parent_elements_b):
+            _map = {}
+
+            # get i info
+            _values = i.find_elements(By.CSS_SELECTOR, "div.st__item div.value")
+            _map["Name"] = _values[0].text
+            _map["Win"] = _values[2].text
+            _map["Lose"] = _values[3].text
+            _map["K/D"] = _values[4].text
+            _map["ADR"] = _values[5].text
+            _map["ACS"] = _values[6].text
+
+            # get j info
+            for k in j.find_elements(By.CSS_SELECTOR, "div.giant-stats, div.stats div.stat"):
+                _map[k.find_element(By.CSS_SELECTOR, "span.name").text] = k.find_element(By.CSS_SELECTOR, "span.value").text
+
+            for k in j.find_elements(By.CSS_SELECTOR, "div.objective-stats div.objective-stats-graph"):
+                _title = k.find_element(By.CSS_SELECTOR, "div.objective-stats-graph__header div.label").text
+                for l, m in zip(k.find_elements(By.CSS_SELECTOR, "div.stat-label"), k.find_elements(By.CSS_SELECTOR, "div.stat-value div.stat-value__graph-value")):
+                    _map[_title + "_" + l.text] = m.text
+            
+            _output.append(_map)
+        
         self._print_info("", mode = "d")
-        return {}
+        return _output
     
     def get_weapon_result(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_weapon_result
