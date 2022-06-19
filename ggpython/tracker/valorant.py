@@ -164,13 +164,13 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
                     
                     # =========================================================>
                     # others
-                    _res["ACS"] = int(member_status[2].text)
-                    _res["K"], _res["D"], _res["A"] = [int(i.text) for i in member_status[3:6]]
+                    _res["ACS"] = member_status[2].text
+                    _res["K"], _res["D"], _res["A"] = [i.text for i in member_status[3:6]]
                     _res["PM"] = member_status[6].text
-                    _res["KD"] = float(member_status[7].text)
-                    _res["ADR"] = float(member_status[8].text)
-                    _res["HS"] = float(str(member_status[9].text).replace("%", "")) / 100
-                    _res["FK"], _res["FD"], _res["MK"], _res["Econ"] = [int(i.text) for i in member_status[10:]]
+                    _res["KD"] = member_status[7].text
+                    _res["ADR"] = member_status[8].text
+                    _res["HS"] = str(member_status[9].text).replace("%", "")
+                    _res["FK"], _res["FD"], _res["MK"], _res["Econ"] = [i.text for i in member_status[10:]]
 
                     # =========================================================>
                     user_list.append(_res)
@@ -191,9 +191,9 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             # =================================================================>
             map_score = match_driver.find_elements(By.CSS_SELECTOR, ".metadata__score span.team__value")
             if len(map_score) > 1:
-                _output["score"] = (int(map_score[0].text), int(map_score[1].text))
+                _output["score"] = (map_score[0].text, map_score[1].text)
             else:
-                _output["score"] = (0, 0)
+                _output["score"] = ("0", "0")
         
         return _output
     
@@ -496,7 +496,11 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
 
         _output = []
         for i in match_url_list:
-            _output.append(self._get_match_result(i))
+            try:
+                _result = self._get_match_result(i)
+                _output.append(_result)
+            except IndexError as e:
+                self._print_info("This is not available url: " + i, mode = "w")
         
         if not _silence:
             self.silence = False
@@ -565,11 +569,28 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             n_match (int)   : number of match count. Defaults to None.
         """
         self._print_info("get custom url list", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        
+        self.get(user_name, user_tag, tracker = "customs")
+        
+        # リスト取得
+        self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".match__row:last-child")
+        elements = self.find_elements(By.CLASS_NAME, "match__row")
+        
+        if n_match is None:
+            n_match = len(elements)
+        elif n_match > len(elements):
+            n_match = len(elements)
+        
+        match_url_list = []
+        for i in range(n_match):
+            a_tag = elements[i].find_elements_by_css_selector("a")
+            if len(a_tag) > 0:
+                match_url_list.append(a_tag[0].get_attribute("href"))
+
         self._print_info("", mode = "d")
-        return []
+        return match_url_list
     
-    def get_custom_result(self, user_name, user_tag, n_match = None) -> dict:
+    def get_custom_result(self, user_name, user_tag, n_match = None) -> list:
         """get_custom_result
         Args:
             user_name (str) : valorant user name
@@ -577,9 +598,24 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             n_match (int)   : number of match count. Defaults to None.
         """
         self._print_info("get custom result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("aready", mode = "d")
+        _silence = self.silence
+        self.silence = True
+        
+        match_url_list = self.get_custom_url_list(user_name, user_tag, n_match = n_match)
+        
+        _output = []
+        for i in match_url_list:
+            try:
+                _result = self._get_match_result(i)
+                _output.append(_result)
+            except IndexError as e:
+                self._print_info("This is not available url: " + i, mode = "w")
+        
+        if not _silence:
+            self.silence = False
         self._print_info("", mode = "d")
-        return {}
+        return _output
 
 # =============================================================================> 
 
