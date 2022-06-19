@@ -164,13 +164,13 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
                     
                     # =========================================================>
                     # others
-                    _res["ACS"] = int(member_status[2].text)
-                    _res["K"], _res["D"], _res["A"] = [int(i.text) for i in member_status[3:6]]
+                    _res["ACS"] = member_status[2].text
+                    _res["K"], _res["D"], _res["A"] = [i.text for i in member_status[3:6]]
                     _res["PM"] = member_status[6].text
-                    _res["KD"] = float(member_status[7].text)
-                    _res["ADR"] = float(member_status[8].text)
-                    _res["HS"] = float(str(member_status[9].text).replace("%", "")) / 100
-                    _res["FK"], _res["FD"], _res["MK"], _res["Econ"] = [int(i.text) for i in member_status[10:]]
+                    _res["KD"] = member_status[7].text
+                    _res["ADR"] = member_status[8].text
+                    _res["HS"] = str(member_status[9].text).replace("%", "")
+                    _res["FK"], _res["FD"], _res["MK"], _res["Econ"] = [i.text for i in member_status[10:]]
 
                     # =========================================================>
                     user_list.append(_res)
@@ -191,9 +191,9 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             # =================================================================>
             map_score = match_driver.find_elements(By.CSS_SELECTOR, ".metadata__score span.team__value")
             if len(map_score) > 1:
-                _output["score"] = (int(map_score[0].text), int(map_score[1].text))
+                _output["score"] = (map_score[0].text, map_score[1].text)
             else:
-                _output["score"] = (0, 0)
+                _output["score"] = ("0", "0")
         
         return _output
     
@@ -215,7 +215,166 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         target_url = VALORANT_TRACKER_WEBSITE + "profile/riot/" + target_url # アップデートで使用不可になったら変更する
         super().get(target_url)
     
-    def get_match_summary(self, user_name, user_tag, mode = "unrated"):
+    def get_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
+        """get_summary
+        Discription:
+            get a game summary
+        Return:
+            dict : game summary
+        """
+        self._print_info("get summary", mode = "p")
+        self._print_info("aready", mode = "d")
+        self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
+        self.random_sleep()
+        
+        # start
+        # self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".scoreboard__table:last-child")
+
+        _output = {}
+        # =====================================================================>
+        # get overview summary
+        # > Play Time, Match Count, KAD, Win, Lose,
+        self._print_info("_____ Overview", mode = "p")
+        
+        _output["PlayTime"] = self.find_element(By.CSS_SELECTOR, "div.segment-stats.area-main-stats span.playtime").text.split(" ")[0]
+        _output["MatchCount"] = self.find_element(By.CSS_SELECTOR, "div.segment-stats.area-main-stats span.matches").text.split(" ")[0]
+        _output["KAD"] = self.find_element(By.CSS_SELECTOR, "div.trn-profile-highlighted-content__stats div.stat span.stat__value").text
+        _output["WinLose"] = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.trn-profile-highlighted-content__ratio g text")[:2]]
+        
+        # > Damage by round, KD, HSP
+        for i in self.find_elements(By.CSS_SELECTOR, "div.giant-stats div.stat.align-left.giant.expandable"):
+            _tmp = i.find_element(By.CSS_SELECTOR, "div.numbers")
+            _output[_tmp.find_element(By.CSS_SELECTOR, "span.name").text] = _tmp.find_element(By.CSS_SELECTOR, "span.value").text
+
+        # > Kills, Headshots, Death, Assists, Score by round, Kills by round, FB, Ace, Clutch, Flawless, Most kill
+        for i in self.find_elements(By.CSS_SELECTOR, "div.main div.stat.align-left.giant.expandable"):
+            _tmp = i.find_element(By.CSS_SELECTOR, "div.numbers")
+            _output[_tmp.find_element(By.CSS_SELECTOR, "span.name").text] = _tmp.find_element(By.CSS_SELECTOR, "span.value").text
+        
+        self._print_info("", mode = "d")
+
+        # =====================================================================>
+        # get current ratings -> only competitive 
+        # > Rating, Peak rating
+        # get accuracy -> only all acts
+        # > Head Count, Body Count, Leg Count
+        # get weapons summary
+        # > Weapon name
+        # > > Head%, Body%, Leg%, Kills
+        # get top maps summary
+        # > Map name
+        # > > Win, Lose
+        for i in self.find_elements(By.CSS_SELECTOR, "div.area-sidebar div.card"):
+            _title = i.find_element(By.CSS_SELECTOR, "div.title").text
+            if _title == "Current Ratings":
+                self._print_info("_____ CurrentRatings", mode = "p")
+                
+                _rating, _peak = [j for j in i.find_elements(By.CSS_SELECTOR, "div.rating-entry div.value")][:2] # Rating
+                # Peak rating
+                _rating_sub, _peak_sub = [j for j in i.find_elements(By.CSS_SELECTOR, "div.rating-entry div.subtext")][:2] # Rating
+                
+                _output["Rating"] = _rating + _rating_sub
+                _output["PeakRating"] = _peak + _peak_sub
+                
+                self._print_info("", mode = "d")
+            elif _title == "Accuracy":
+                self._print_info("_____ CurrentRatings", mode = "p")
+                
+                _tmp = [j.text for j in i.find_elements(By.CSS_SELECTOR, "table.accuracy__stats td:nth-child(3) span.stat__value")]
+                
+                _output["Head"] = _tmp[0]
+                _output["Body"] = _tmp[1]
+                _output["Legs"] = _tmp[2]
+                
+                self._print_info("", mode = "d")
+            elif _title == "Top Weapons":
+                self._print_info("_____ Weapons", mode = "p")
+                _tmp_weapon = []
+                
+                for j in i.find_elements(By.CSS_SELECTOR, "div.top-weapons__weapons div.weapon"):
+                    _tmp = {}
+                    
+                    _tmp["Name"] = j.find_element(By.CSS_SELECTOR, "div.weapon__info div.weapon__name").text
+                    _tmp["Type"] = j.find_element(By.CSS_SELECTOR, "div.weapon__info div.weapon__type").text
+                    _tmp["Kill"] = j.find_element(By.CSS_SELECTOR, "div.weapon__main-stat span.value").text
+                    for k, l in zip(["Head", "Body", "Legs"], j.find_elements(By.CSS_SELECTOR, "div.weapon__accuracy-hits span.stat")):
+                        _tmp[k] = l.text
+                    
+                    _tmp_weapon.append(_tmp)
+                
+                _output["Weapon"] = _tmp_weapon
+                self._print_info("", mode = "d")
+            elif _title == "Top Maps":
+                self._print_info("_____ Maps", mode = "p")
+                _tmp_map = []
+
+                for j in i.find_elements(By.CSS_SELECTOR, "div.top-maps__maps-map"):
+                    _tmp = {}
+                    
+                    _tmp["Name"] = j.find_element(By.CSS_SELECTOR, "div.name").text
+                    
+                    _wl = j.find_element(By.CSS_SELECTOR, "div.info div.label").text.split(" ")
+                    _tmp["Win"] = _wl[0][:-1]
+                    _tmp["Lose"] = _wl[2][:-1]
+                    
+                    _tmp_map.append(_tmp)
+                
+                _output["Map"] = _tmp_map
+                self._print_info("", mode = "d")
+        
+        # =====================================================================>
+        # get top agents summary
+        # > Agent name
+        # > > Time Played, Matches, Win%, KD, ADR, ACS, HS%
+        self._print_info("_____ TopAgents", mode = "p")
+
+        _top_agents_head = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.st-header div.st-header__item span.label")]
+        _top_agents = []
+        for i in self.find_elements(By.CSS_SELECTOR, "div.top-agents div.st-content"):
+            for j in i.find_elements(By.CSS_SELECTOR,"div.st-content__item"):
+                _tmp = {}
+                for k, l in zip(_top_agents_head, j.find_elements(By.CSS_SELECTOR,"div.st__item")):
+                    _tmp[k] = [m.text for m in l.find_elements(By.CSS_SELECTOR, "div.info div.value, div.small")]
+                _top_agents.append(_tmp)
+        
+        _output["Agent"] = _top_agents
+
+        self._print_info("", mode = "d")
+        
+        # =====================================================================>
+        # get last 20 match summary
+        # > Win, Lose, KD, ADR
+        # > Agent name
+        # > > Win, Lose, KD
+        _last_20_matches = {}
+        
+        _tmp_last_20_matches = self.find_element(By.CSS_SELECTOR, "div.area-matches>div.card div.trn-gamereport-stats div.left")
+        _last_20_matches["Win"] = _tmp_last_20_matches.find_element(By.CSS_SELECTOR, "span.wins").text
+        _last_20_matches["Lose"] = _tmp_last_20_matches.find_element(By.CSS_SELECTOR, "span.losses").text
+        _last_20_matches["KD"] = _tmp_last_20_matches.find_elements(By.CSS_SELECTOR, "span.highlight")[0].text
+        _last_20_matches["ADR"] = _tmp_last_20_matches.find_elements(By.CSS_SELECTOR, "span.highlight")[1].text
+
+        _tmp_last_20_matches_agent = []
+
+        for i in self.find_elements(By.CSS_SELECTOR, "div.area-matches>div.card div.trn-gamereport-stats div.right div.trn-gamereport-stats__mini-stat"):
+            _tmp = {}
+            
+            _tmp["Name"] = dict_find_key(VALORANT_AGENT_ICONS, str(i.find_element(By.TAG_NAME, "img").get_attribute("src")))
+            _tmp["Win"] = i.find_element(By.CSS_SELECTOR, "div.title").text.split(" ")[0].replace("W", "")
+            _tmp["Lose"] = i.find_element(By.CSS_SELECTOR, "div.title").text.split(" ")[2].replace("L", "")
+            _tmp["KD"] = i.find_element(By.CSS_SELECTOR, "div.subtitle").text.split(" ")[1]
+
+            _tmp_last_20_matches_agent.append(_tmp)
+        
+        _last_20_matches["Agent"] = _tmp_last_20_matches_agent
+
+        _output["Match"] = _last_20_matches
+
+        self._print_info("_____ **its all of summary**", mode = "p")
+        self._print_info("", mode = "d")
+        return _output
+    
+    def get_match_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> dict:
         """get_match_summary
         Args:
             user_name (str) : valorant user name
@@ -223,11 +382,36 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get match summary", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        
+        self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
+        self.random_sleep()
+
+        _last_20_matches = {}
+        
+        _tmp_last_20_matches = self.find_element(By.CSS_SELECTOR, "div.area-matches>div.card div.trn-gamereport-stats div.left")
+        _last_20_matches["Win"] = _tmp_last_20_matches.find_element(By.CSS_SELECTOR, "span.wins").text
+        _last_20_matches["Lose"] = _tmp_last_20_matches.find_element(By.CSS_SELECTOR, "span.losses").text
+        _last_20_matches["KD"] = _tmp_last_20_matches.find_elements(By.CSS_SELECTOR, "span.highlight")[0].text
+        _last_20_matches["ADR"] = _tmp_last_20_matches.find_elements(By.CSS_SELECTOR, "span.highlight")[1].text
+
+        _tmp_last_20_matches_agent = []
+
+        for i in self.find_elements(By.CSS_SELECTOR, "div.area-matches>div.card div.trn-gamereport-stats div.right div.trn-gamereport-stats__mini-stat"):
+            _tmp = {}
+            
+            _tmp["Name"] = dict_find_key(VALORANT_AGENT_ICONS, str(i.find_element(By.TAG_NAME, "img").get_attribute("src")))
+            _tmp["Win"] = i.find_element(By.CSS_SELECTOR, "div.title").text.split(" ")[0].replace("W", "")
+            _tmp["Lose"] = i.find_element(By.CSS_SELECTOR, "div.title").text.split(" ")[2].replace("L", "")
+            _tmp["KD"] = i.find_element(By.CSS_SELECTOR, "div.subtitle").text.split(" ")[1]
+
+            _tmp_last_20_matches_agent.append(_tmp)
+        
+        _last_20_matches["Agent"] = _tmp_last_20_matches_agent
+
         self._print_info("", mode = "d")
-        return {}
+        return _last_20_matches
     
-    def get_pc_summary(self, user_name, user_tag, mode = "unrated"): # same as get_pc_result
+    def get_pc_summary(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_pc_summary
         Args:
             user_name (str) : valorant user name
@@ -235,10 +419,29 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get pc summary", mode = "p")
-        self._print_info("", mode = "d")
-        return self.get_pc_result(user_name, user_tag, mode = mode)
+        
+        self.get(user_name, user_tag, tracker = "overview", tracker_query = {"playlist" : mode, "season" : act})
+        self.random_sleep()
 
-    def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated"):
+        # =====================================================================>
+        # get top agents summary
+        # > Agent name
+        # > > Time Played, Matches, Win%, KD, ADR, ACS, HS%
+
+        _top_agents_head = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.st-header div.st-header__item span.label")]
+        _top_agents = []
+        
+        for i in self.find_elements(By.CSS_SELECTOR, "div.top-agents div.st-content"):
+            for j in i.find_elements(By.CSS_SELECTOR,"div.st-content__item"):
+                _tmp = {}
+                for k, l in zip(_top_agents_head, j.find_elements(By.CSS_SELECTOR,"div.st__item")):
+                    _tmp[k] = [m.text for m in l.find_elements(By.CSS_SELECTOR, "div.info div.value, div.small")]
+                _top_agents.append(_tmp)
+        
+        self._print_info("", mode = "d")
+        return _top_agents
+
+    def get_match_url_list(self, user_name, user_tag, n_match = None, mode = "unrated", act = "all") -> list:
         """get_match_url_list
 
         Args:
@@ -252,7 +455,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         """
         self._print_info("get match url list", mode = "p")
         # アクセス
-        self.get(user_name, user_tag, tracker_query = {"playlist" : mode})
+        self.get(user_name, user_tag, tracker_query = {"playlist" : mode, "season" : act})
         
         # リスト取得
         self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".match:last-child")
@@ -273,7 +476,7 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         self._print_info("", mode = "d")
         return match_url_list
     
-    def get_match_result(self, user_name, user_tag, n_match = None, mode = "unrated"):
+    def get_match_result(self, user_name, user_tag, n_match = None, mode = "unrated", act = "all") -> list:
         """get_match_result
 
         Args:
@@ -289,23 +492,27 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
         _silence = self.silence
         self.silence = True
 
-        match_url_list = self.get_match_url_list(user_name, user_tag, n_match = n_match, mode = mode)
+        match_url_list = self.get_match_url_list(user_name, user_tag, n_match = n_match, mode = mode, act = act)
 
         _output = []
         for i in match_url_list:
-            _output.append(self._get_match_result(i))
+            try:
+                _result = self._get_match_result(i)
+                _output.append(_result)
+            except IndexError as e:
+                self._print_info("This is not available url: " + i, mode = "w")
         
         if not _silence:
             self.silence = False
         self._print_info("", mode = "d")
         return _output
 
-    def get_pc_url_list(self, user_name, user_tag, mode = "unrated"): # unnecessary method !!!
+    def get_pc_url_list(self, user_name, user_tag, mode = "unrated", act = "all") -> list: # unnecessary method !!!
         """ get_pc_url_list """
         self._print_info("This is not working in valorant", mode = "e")
         return []
     
-    def get_pc_result(self, user_name, user_tag, mode = "unrated"):
+    def get_pc_result(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_pc_result
         Args:
             user_name (str) : valorant user name
@@ -313,25 +520,100 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get pc result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self.get(user_name, user_tag, tracker = "agents", tracker_query = {"playlist" : mode, "season" : act})
+
+        self.wait_element_clickable(2.0, element_by = By.CSS_SELECTOR, target_string = "div.expand-all span").click() # div.expand-all is not clickable
+        _info_parent_elements_a = self.find_elements(By.CSS_SELECTOR, "div.agent div.agent__content") # 基本
+        _info_parent_elements_b = self.find_elements(By.CSS_SELECTOR, "div.agent-drawer div.agent-drawer__content") # 詳細
+
+        _output = []
+        for i, j in zip(_info_parent_elements_a, _info_parent_elements_b):
+            _agent = {}
+            
+            # get i values
+            _agent["Name"] = i.find_element(By.CSS_SELECTOR, "div.agent__agent span.agent__name-name").text
+            _agent["PlayTime"] = i.find_element(By.CSS_SELECTOR, "div.agent__agent span.agent__name-time").text
+            
+            _agent_stats = i.find_elements(By.CSS_SELECTOR, "div.agent__stat")
+            _agent["Matches"] = _agent_stats[0].text
+            _agent["Win %"] = _agent_stats[1].text
+            _agent["K/D Ratio"] = _agent_stats[2].text
+            _agent["Kill"] = _agent_stats[3].text.split(" / ")[0] # kk / dd / aa
+            _agent["Death"] = _agent_stats[3].text.split(" / ")[1] # kk / dd / aa
+            _agent["Assist"] = _agent_stats[3].text.split(" / ")[2] # kk / dd / aa
+            _agent["ADR"] = _agent_stats[4].text
+            _agent["ACS"] = _agent_stats[5].text
+            
+            _agent["Ability"] = [k.text for k in i.find_elements(By.CSS_SELECTOR, "div.ability span.ability__value")]
+            
+            # get j values
+            for k in j.find_elements(By.CSS_SELECTOR, "div.agent-drawer__key-stats div.key-stat__text"):
+                _agent[k.find_element(By.CSS_SELECTOR, "span.key-stat__label").text] = k.find_element(By.CSS_SELECTOR, "span.key-stat__value").text
+            
+            for k in j.find_elements(By.CSS_SELECTOR, "div.agent-drawer__objective"):
+                _title = k.find_element(By.CSS_SELECTOR, "div.agent-drawer__objective-title span").text
+                _agent[_title + "_Win"] = k.find_elements(By.CSS_SELECTOR, "div.agent-winloss div.stat")[0].text.replace(" W", "")
+                _agent[_title + "_Lose"] = k.find_elements(By.CSS_SELECTOR, "div.agent-winloss div.stat")[1].text.replace(" L", "")
+                for l in k.find_elements(By.CSS_SELECTOR, "div.agent-drawer__objective-stats div.stat"):
+                    _agent[_title + "_" + l.find_element(By.CSS_SELECTOR, "span.stat__label").text] = l.find_element(By.CSS_SELECTOR, "span.stat__value").text
+                
+            _output.append(_agent)
+
         self._print_info("", mode = "d")
-        return {}
+        return _output
 
     # =========================================================================>
     # Utils valorant original
-    def get_map_result(self, user_name, user_tag, mode = "unrated") -> dict:
+    def get_map_result(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_map_result
+
         Args:
             user_name (str) : valorant user name
-            user_tag (str)  : valorant user name such as #(.*?)
-            mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+            user_tag (str) : valorant user name such as #(.*?)
+            mode (str, optional) : match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
+        
+        Returns:
+            list : map result
         """
         self._print_info("get map result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self.get(user_name, user_tag, tracker = "maps", tracker_query = {"playlist" : mode, "season" : act})
+
+        # 詳細を開くボタンを全てクリック
+        self.wait_element_clickable(2.0, element_by = By.CSS_SELECTOR, target_string = "div.st-content__item-expand")
+        for i in self.find_elements(By.CSS_SELECTOR, "div.st-content__item-expand"):
+            i.click()
+
+        _info_parent_elements_a = self.find_elements(By.CSS_SELECTOR, "div.st-content div.st-content__item") # 基本
+        _info_parent_elements_b = self.find_elements(By.CSS_SELECTOR, "div.st-content div.st-content__drawer") # 詳細
+
+        _output = []
+        for i, j in zip(_info_parent_elements_a, _info_parent_elements_b):
+            _map = {}
+
+            # get i info
+            _values = i.find_elements(By.CSS_SELECTOR, "div.st__item div.value")
+            _map["Name"] = _values[0].text
+            _map["Win"] = _values[2].text
+            _map["Lose"] = _values[3].text
+            _map["K/D"] = _values[4].text
+            _map["ADR"] = _values[5].text
+            _map["ACS"] = _values[6].text
+
+            # get j info
+            for k in j.find_elements(By.CSS_SELECTOR, "div.giant-stats, div.stats div.stat"):
+                _map[k.find_element(By.CSS_SELECTOR, "span.name").text] = k.find_element(By.CSS_SELECTOR, "span.value").text
+
+            for k in j.find_elements(By.CSS_SELECTOR, "div.objective-stats div.objective-stats-graph"):
+                _title = k.find_element(By.CSS_SELECTOR, "div.objective-stats-graph__header div.label").text
+                for l, m in zip(k.find_elements(By.CSS_SELECTOR, "div.stat-label"), k.find_elements(By.CSS_SELECTOR, "div.stat-value div.stat-value__graph-value")):
+                    _map[_title + "_" + l.text] = m.text
+            
+            _output.append(_map)
+        
         self._print_info("", mode = "d")
-        return {}
+        return _output
     
-    def get_weapon_result(self, user_name, user_tag, mode = "unrated") -> dict:
+    def get_weapon_result(self, user_name, user_tag, mode = "unrated", act = "all") -> list:
         """get_weapon_result
         Args:
             user_name (str) : valorant user name
@@ -339,19 +621,37 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             mode (str, optional): match playlist. Defaults to "unrated". "unrated"|"competitive"|"spikerush"|"snowball"|"replication"|"deathmatch"
         """
         self._print_info("get weapon result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self.get(user_name, user_tag, tracker = "weapons", tracker_query = {"playlist" : mode, "season" : act})
+
+        self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = "div.segment-used__table table tbody tr:last-child")
+
+        _header = [i.text for i in self.find_elements(By.CSS_SELECTOR, "div.segment-used__table table thead tr th")]
+        _output = []
+
+        for i in self.find_elements(By.CSS_SELECTOR, "div.segment-used__table table tbody tr"):
+            _top = True
+            _weapon = {}
+            
+            for j, k in zip(_header, i.find_elements(By.TAG_NAME, "td")):
+                if _top:
+                    _weapon["Name"] = k.find_element(By.CSS_SELECTOR, "span.segment-used__tp-name").text
+                    _weapon["Type"] = k.find_element(By.CSS_SELECTOR, "span.segment-used__tp-sub").text
+                    _top = False
+                else:
+                    _weapon[j] = k.find_element(By.TAG_NAME, "span").text
+            
+            _output.append(_weapon)
+
         self._print_info("", mode = "d")
-        return {}
+        return _output
     
-    def get_award_result(self, user_name, user_tag) -> dict:
+    def get_award_result(self, user_name, user_tag) -> dict: # unnecessary method !!!
         """get_award_result
         Args:
             user_name (str) : valorant user name
             user_tag (str)  : valorant user name such as #(.*?)
         """
-        self._print_info("get award result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
-        self._print_info("", mode = "d")
+        self._print_info("This is not working in valorant", mode = "e")
         return {}
     
     def get_custom_url_list(self, user_name, user_tag, n_match = None) -> list:
@@ -362,11 +662,28 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             n_match (int)   : number of match count. Defaults to None.
         """
         self._print_info("get custom url list", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        
+        self.get(user_name, user_tag, tracker = "customs")
+        
+        # リスト取得
+        self.wait_element(2.0, element_by = By.CSS_SELECTOR, target_string = ".match__row:last-child")
+        elements = self.find_elements(By.CLASS_NAME, "match__row")
+        
+        if n_match is None:
+            n_match = len(elements)
+        elif n_match > len(elements):
+            n_match = len(elements)
+        
+        match_url_list = []
+        for i in range(n_match):
+            a_tag = elements[i].find_elements_by_css_selector("a")
+            if len(a_tag) > 0:
+                match_url_list.append(a_tag[0].get_attribute("href"))
+
         self._print_info("", mode = "d")
-        return []
+        return match_url_list
     
-    def get_custom_result(self, user_name, user_tag, n_match = None) -> dict:
+    def get_custom_result(self, user_name, user_tag, n_match = None) -> list:
         """get_custom_result
         Args:
             user_name (str) : valorant user name
@@ -374,9 +691,24 @@ class ValorantTrackerWebsiteAPI(TrackerWebsiteAPI):
             n_match (int)   : number of match count. Defaults to None.
         """
         self._print_info("get custom result", mode = "p")
-        self._print_info("This is `coming soon` method", mode = "w")
+        self._print_info("aready", mode = "d")
+        _silence = self.silence
+        self.silence = True
+        
+        match_url_list = self.get_custom_url_list(user_name, user_tag, n_match = n_match)
+        
+        _output = []
+        for i in match_url_list:
+            try:
+                _result = self._get_match_result(i)
+                _output.append(_result)
+            except IndexError as e:
+                self._print_info("This is not available url: " + i, mode = "w")
+        
+        if not _silence:
+            self.silence = False
         self._print_info("", mode = "d")
-        return {}
+        return _output
 
 # =============================================================================> 
 
